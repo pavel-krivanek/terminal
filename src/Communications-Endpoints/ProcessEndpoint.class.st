@@ -72,7 +72,7 @@ ProcessEndpoint >> close [
 { #category : #'initialize-release' }
 ProcessEndpoint >> command: cmd arguments: args [
 
-	(pty := PseudoTTY command: cmd arguments: args)
+	(pty := PseudoTTYMock command: cmd arguments: args)
 		isNil ifTrue: [^self error: 'could not create process'].
 	command := cmd.
 	arguments := args.
