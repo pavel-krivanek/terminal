@@ -41,6 +41,22 @@ PseudoTTYMock2 >> isConnected [
 ]
 
 { #category : #'input/output' }
+PseudoTTYMock2 >> nextPut: aCharacterOrInteger [
+
+	| buffer |
+	
+	
+	buffer := {aCharacterOrInteger} asByteArray.
+	buffer pinInMemory.
+
+	^ PseudoTTYLib uniqueInstance write: master to: buffer length: buffer size.
+	
+	
+	
+
+]
+
+{ #category : #'input/output' }
 PseudoTTYMock2 >> noteWindowSize: aPoint [
 
 	"self primWindowSize: fileHandle cols: aPoint x rows: aPoint y"

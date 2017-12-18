@@ -268,7 +268,7 @@ TeletypeWindow >> initialize [
 
 	super initialize.
 	self setLabel: (windowTitle := iconTitle := 'Teletype').
-	self extent: 80@60.
+	self extent: 10@10.
 ]
 
 { #category : #private }

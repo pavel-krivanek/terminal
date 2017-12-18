@@ -91,3 +91,9 @@ PseudoTTYLib >> readAndPrint: master [
 
 	^ self ffiCall: #( int readAndPrint ( LGitWriteBackValueInt master ) ) module: 'pty.so'
 ]
+
+{ #category : #testing }
+PseudoTTYLib >> write: master  to: buffer length: length [
+
+	^ self ffiCall: #( int writeTo ( LGitWriteBackValueInt master, char * buffer, int length ) ) module: 'pty.so'
+]

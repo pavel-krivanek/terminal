@@ -4675,7 +4675,7 @@ SimpleTextMorph >> cursorColour: cc [
 { #category : #private }
 SimpleTextMorph >> defaultFont [
 
-	^ (LogicalFont familyName: 'Source Code Pro' pointSize: 10).
+	^ (LogicalFont familyName: 'Source Code Pro' pointSize: 8).
 ]
 
 { #category : #drawing }
