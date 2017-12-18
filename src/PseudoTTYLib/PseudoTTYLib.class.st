@@ -75,6 +75,18 @@ PseudoTTYLib >> openPty: arg [
 ]
 
 { #category : #testing }
+PseudoTTYLib >> read: master  to: buffer [
+
+	^ self ffiCall: #( int readTo ( LGitWriteBackValueInt master, char * buffer ) ) module: 'pty.so'
+]
+
+{ #category : #testing }
+PseudoTTYLib >> read: master  to: buffer maxLength: maxLength [
+
+	^ self ffiCall: #( int readTo ( LGitWriteBackValueInt master, char * buffer, int maxLength ) ) module: 'pty.so'
+]
+
+{ #category : #testing }
 PseudoTTYLib >> readAndPrint: master [ 
 
 	^ self ffiCall: #( int readAndPrint ( LGitWriteBackValueInt master ) ) module: 'pty.so'

@@ -4716,7 +4716,7 @@ SimpleTextMorph >> drawLineOn: aCanvas [
 		port := bounds left + (l - 1 * pitch) @ bounds top corner: bounds left + (lineState stringSize * pitch) @ bounds bottom.
 		(em bitAnd: 64) == 64 ifTrue: [tmp := fg.  fg := bg.  bg := tmp].
 		aCanvas
-			"fillRectangle: port fillStyle: bg;"
+			fillRectangle: port fillStyle: bg;
 			drawString: lineState string
 			from: l to: r in: port
 			font: font

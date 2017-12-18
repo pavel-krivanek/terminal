@@ -176,7 +176,7 @@ VT102Emulator >> bel: arg [
 	"ring keyboard bell"
 
 	self traceControl: 'BEL'.
-	Smalltalk beep
+	"Smalltalk beep"
 ]
 
 { #category : #'control characters' }
