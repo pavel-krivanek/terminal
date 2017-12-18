@@ -1000,7 +1000,7 @@ TeletypeMorph >> initializeTeletype: size [
 	"Initialize the default behaviour: dumb terminal with local echo and default xterm VT options."
 
 	font := LogicalFont familyName: 'Source Code Pro' pointSize: 9.
-	pitch := font widthOf: $m.
+	pitch := font widthOf: $W.
 	skip := font height.
 	cols := size x.
 	rows := size y.

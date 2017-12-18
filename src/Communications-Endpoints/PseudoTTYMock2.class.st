@@ -72,7 +72,7 @@ PseudoTTYMock2 >> peekUpToEnd [
 	
 	buffer := ByteArray ofSize: 32.
 	buffer pinInMemory.
-	ExternalResourceChecker waitFor: master value.
+	PTTYResourceChecker waitFor: master value.
 
 	length := PseudoTTYLib uniqueInstance read: master to: buffer maxLength: buffer size.
 	
