@@ -1,5 +1,13 @@
 "
 I am a kind of SystemWindow intended specifically for hosting a TeletypeMorph.  I provide connection-oriented menus, persistent preferences and menu-based access to my TeletypeMorphs options.
+
+
+win := TeletypeWindow open.
+	(ProcessEndpoint command: '' arguments: '') asProtocolStack
+		push:		XtermEmulator new;
+		push:		(win instVarNamed: #tty);
+		install;
+		run
 "
 Class {
 	#name : #TeletypeWindow,
