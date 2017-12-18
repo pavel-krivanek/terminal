@@ -59,7 +59,10 @@ PseudoTTYMock2 >> nextPut: aCharacterOrInteger [
 { #category : #'input/output' }
 PseudoTTYMock2 >> noteWindowSize: aPoint [
 
-	"self primWindowSize: fileHandle cols: aPoint x rows: aPoint y"
+	PseudoTTYLib uniqueInstance setWindowSizeFor: master value cols: aPoint x rows: aPoint y
+	
+	
+
 ]
 
 { #category : #'input/output' }

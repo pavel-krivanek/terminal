@@ -93,6 +93,12 @@ PseudoTTYLib >> readAndPrint: master [
 ]
 
 { #category : #testing }
+PseudoTTYLib >> setWindowSizeFor: fd cols: cols rows: rows [
+
+	^ self ffiCall: #( int setWindowSize ( int fd, int cols, int rows ) ) module: 'pty.so'
+]
+
+{ #category : #testing }
 PseudoTTYLib >> write: master  to: buffer length: length [
 
 	^ self ffiCall: #( int writeTo ( LGitWriteBackValueInt master, char * buffer, int length ) ) module: 'pty.so'

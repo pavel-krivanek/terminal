@@ -4660,7 +4660,7 @@ SimpleTextMorph >> contents: aLineState [
 	fgMap := Foreground shallowCopy.
 	bgMap := Background shallowCopy.
 	lineState := aLineState.
-	pitch := font widthOfString: ' '.
+	pitch := font widthOfString: 'W'.
 	color := Color white.
 	rv := false.
 	cursorColour := nil.
@@ -4844,23 +4844,20 @@ SimpleTextMorph >> runsDo: aBlock [
 	2 to: stringSize do: [:i |
 		(fg ~~ (fgr at: i) or: [bg ~~ (bgr at: i) or: [em ~~ (emr at: i)]])
 			ifTrue:
-				[aBlock valueWithArguments: { 
-						left.
-					 	i - 1.	
-						(self foregroundColourAt: fg).
-						(self backgroundColourAt: bg).
-						em.
+				[aBlock valueWithArguments: {
+					left. i - 1.
+					(self foregroundColourAt: fg).
+					(self backgroundColourAt: bg).
+					em.
 					}.
 				 bg := bgr at: i.  fg := fgr at: i.  em := emr at: i.
 				 left := i]].
-	aBlock valueWithArguments:
-		{
-			left.
-			stringSize.
-			(self foregroundColourAt: fg).
-			(self backgroundColourAt: bg).
-			em
-			}
+	aBlock valueWithArguments: { 
+		left.
+		stringSize.
+		(self foregroundColourAt: fg).
+		(self backgroundColourAt: bg).
+		em }
 ]
 
 { #category : #accessing }

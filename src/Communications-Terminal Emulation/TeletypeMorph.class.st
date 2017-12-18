@@ -996,7 +996,46 @@ TeletypeMorph >> initializeTabs [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeTeletype: size [	"Initialize the default behaviour: dumb terminal with local echo and default xterm VT options."	font := (LogicalFont familyName: 'Source Code Pro' pointSize: 10).	pitch := font widthOf: $m.	skip := font height.	cols := size x.  rows := size y.	lines := OrderedCollection new.	savedLines := 0.	savedLineLimit := SavedLineLimit.	displayStart := 0.	x := 1.  y := 1.	fg := 0.  bg := 7.  em := 0.	rv := false.  ec := false.	session := nil.	self initializeTabs.	self initializeTerminalModes.	"Default low protocol: local echo"	down := (ProtocolAdaptor new localEcho up: self).	showCursor := true.	running := false.	autoFlush := 0.	steps := 0.	altScreenActive := false.	altScreenColours := false.	hasFocus := true.	selectionStart := selectionEnd := nil.	selectionActive := false.	selection := ''.	mouseControlsSelection := MouseControlsSelection.	keyboardControlsSelection := KeyboardControlsSelection.	scrollOnInput := false.	scrollOnOutput := true.	allow132 := true.	characterClasses := CharClass copy.	cursorColour := nil.
+TeletypeMorph >> initializeTeletype: size [
+	"Initialize the default behaviour: dumb terminal with local echo and default xterm VT options."
+
+	font := LogicalFont familyName: 'Source Code Pro' pointSize: 9.
+	pitch := font widthOf: $m.
+	skip := font height.
+	cols := size x.
+	rows := size y.
+	lines := OrderedCollection new.
+	savedLines := 0.
+	savedLineLimit := SavedLineLimit.
+	displayStart := 0.
+	x := 1.
+	y := 1.
+	fg := 0.
+	bg := 7.
+	em := 0.
+	rv := false.
+	ec := false.
+	session := nil.
+	self initializeTabs.
+	self initializeTerminalModes.	"Default low protocol: local echo"
+	down := ProtocolAdaptor new localEcho up: self.
+	showCursor := true.
+	running := false.
+	autoFlush := 0.
+	steps := 0.
+	altScreenActive := false.
+	altScreenColours := false.
+	hasFocus := true.
+	selectionStart := selectionEnd := nil.
+	selectionActive := false.
+	selection := ''.
+	mouseControlsSelection := MouseControlsSelection.
+	keyboardControlsSelection := KeyboardControlsSelection.
+	scrollOnInput := false.
+	scrollOnOutput := true.
+	allow132 := true.
+	characterClasses := CharClass copy.
+	cursorColour := nil
 ]
 
 { #category : #'initialize-release' }
