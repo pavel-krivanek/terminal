@@ -15,23 +15,19 @@ PseudoTTYMock2 class >> command: commandString arguments: argumentArray [
 ]
 
 { #category : #'input/output' }
+PseudoTTYMock2 >> close [
+	
+	PseudoTTYLib uniqueInstance
+		closeMaster: (master unsignedLongAt: 1)
+		slave: (slave unsignedLongAt: 1)
+]
+
+{ #category : #'input/output' }
 PseudoTTYMock2 >> initialize [
-
 	super initialize.
-	
-FFIMethodRegistry resetAll.
-Smalltalk vm listLoadedModules.
-Smalltalk vm unloadModule: 'pty.so'.
-Smalltalk garbageCollect.
-
-"LibC uniqueInstance system: 'gcc -c -m32 pty.c'.
-LibC uniqueInstance system: 'gcc -shared -m32 -o pty.so pty.o -lutil '.
-"
-master := (FFIExternalType resolveType: 'int') newBuffer.
-slave := (FFIExternalType resolveType: 'int') newBuffer.
-	
-PseudoTTYLib uniqueInstance	openMaster: master slave: slave.
-	
+	master := (FFIExternalType resolveType: 'int') newBuffer.
+	slave := (FFIExternalType resolveType: 'int') newBuffer.
+	PseudoTTYLib uniqueInstance openMaster: master slave: slave
 ]
 
 { #category : #'input/output' }

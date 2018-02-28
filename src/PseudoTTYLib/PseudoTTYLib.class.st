@@ -32,79 +32,103 @@ PseudoTTYLib class >> openPty [
 	^ self ffiCall: #( void openpty_demo () ) module: 'pty.dll'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
+PseudoTTYLib >> close: aFileDescriptor [
+
+	^ self ffiCall: #(int close(int aFileDescriptor))
+]
+
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> closeMaster: master slave: slave [
 
 	^ self ffiCall: #(int closeMasterSlave (int* master, int* slave))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> fill: a and: b [
 
 	^ self ffiCall: #(int fill(int* a, int* b))
 ]
 
-{ #category : #testing }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> hasChar: master [ 
 
 	^ self ffiCall: #(int hasChar (int* master))
 ]
 
+{ #category : #'ffi-calls' }
+PseudoTTYLib >> ioctlFileDescriptor: aFileDescriptor requesting: aRequest [
+
+	^ self ffiCall: #(int ioctl(int aFileDescriptor, unsigned long aRequest, 0))
+]
+
 { #category : #'accessing platform' }
 PseudoTTYLib >> macModuleName [
 	
-	^ 'pty.so'
+	^ 'libc.dylib'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> openMaster: master slave: slave [
 
 	^ self ffiCall: #(int openMasterSlave(int* master ,int* slave))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
+PseudoTTYLib >> openPTYMaster: master slave: slave [
+
+	^ self ffiCall: #(int openpty(int* master ,int* slave, 0, 0))
+]
+
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> openPty [
 
 	^ self ffiCall: #(int openpty_demo(int arg))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> openPty2: arg [
 
 	^ self ffiCall: #(int openpty_demo2(int arg))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> openPty: arg [
 
 	^ self ffiCall: #(int openpty_demo(int arg))
 ]
 
-{ #category : #testing }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> read: master  to: buffer [
 
 	^ self ffiCall: #(int readTo(int * master, char* buffer))
 ]
 
-{ #category : #testing }
-PseudoTTYLib >> read: master  to: buffer maxLength: maxLength [
+{ #category : #'ffi-calls' }
+PseudoTTYLib >> read: master to: buffer maxLength: maxLength [
 
-	^ self ffiCall: #(int readTo(int* master, char* buffer, int maxLength))
+	^ self ffiCall: #(int read(int master, char* buffer, int maxLength))
 ]
 
-{ #category : #testing }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> readAndPrint: master [ 
 
 	^ self ffiCall: #(int readAndPrint(int* master))
 ]
 
-{ #category : #testing }
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> setWindowSizeFor: fd cols: cols rows: rows [
 
 	^ self ffiCall: #(int setWindowSize(int fd, int cols, int rows))
 ]
 
-{ #category : #testing }
+{ #category : #'ffi-calls' }
+PseudoTTYLib >> setsid [
+
+	^ self ffiCall: #(int setsid())
+]
+
+{ #category : #'ffi-calls' }
 PseudoTTYLib >> write: master  to: buffer length: length [
 
 	^ self ffiCall: #(int writeTo(int* master, char* buffer, int length))
