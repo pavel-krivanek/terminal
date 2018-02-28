@@ -24,11 +24,11 @@ Smalltalk vm listLoadedModules.
 Smalltalk vm unloadModule: 'pty.so'.
 Smalltalk garbageCollect.
 
-LibC uniqueInstance system: 'gcc -c -m32 pty.c'.
+"LibC uniqueInstance system: 'gcc -c -m32 pty.c'.
 LibC uniqueInstance system: 'gcc -shared -m32 -o pty.so pty.o -lutil '.
-
-master := LGitWriteBackValueInt new.
-slave := LGitWriteBackValueInt new.
+"
+master := (FFIExternalType resolveType: 'int') newBuffer.
+slave := (FFIExternalType resolveType: 'int') newBuffer.
 	
 PseudoTTYLib uniqueInstance	openMaster: master slave: slave.
 	
@@ -42,41 +42,29 @@ PseudoTTYMock2 >> isConnected [
 
 { #category : #'input/output' }
 PseudoTTYMock2 >> nextPut: aCharacterOrInteger [
-
 	| buffer |
-	
-	
 	buffer := {aCharacterOrInteger} asByteArray.
 	buffer pinInMemory.
-
-	^ PseudoTTYLib uniqueInstance write: master to: buffer length: buffer size.
-	
-	
-	
-
+	^ PseudoTTYLib uniqueInstance write: (master unsignedLongAt: 1) to: buffer length: buffer size
 ]
 
 { #category : #'input/output' }
 PseudoTTYMock2 >> noteWindowSize: aPoint [
-
-	PseudoTTYLib uniqueInstance setWindowSizeFor: master value cols: aPoint x rows: aPoint y
-	
-	
-
+	PseudoTTYLib uniqueInstance
+		setWindowSizeFor: (master unsignedLongAt: 1) value
+		cols: aPoint x
+		rows: aPoint y
 ]
 
 { #category : #'input/output' }
 PseudoTTYMock2 >> peekUpToEnd [
-
 	| buffer length |
-	
 	buffer := ByteArray ofSize: 32.
 	buffer pinInMemory.
-	PTTYResourceChecker waitFor: master value.
-
-	length := PseudoTTYLib uniqueInstance read: master to: buffer maxLength: buffer size.
-	
-	^ buffer first: length.
-	
-
+	PTTYResourceChecker waitFor: (master unsignedLongAt: 1).
+	length := PseudoTTYLib uniqueInstance
+		read: (master unsignedLongAt: 1)
+		to: buffer
+		maxLength: buffer size.
+	^ buffer first: length
 ]

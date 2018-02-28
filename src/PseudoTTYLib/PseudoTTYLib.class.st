@@ -35,71 +35,77 @@ PseudoTTYLib class >> openPty [
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> closeMaster: master slave: slave [
 
-	^ self ffiCall: #( int closeMasterSlave ( LGitWriteBackValueInt master , LGitWriteBackValueInt slave ) ) module: 'pty.so'
+	^ self ffiCall: #(int closeMasterSlave (int* master, int* slave))
 ]
 
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> fill: a and: b [
 
-	^ self ffiCall: #( int fill ( LGitWriteBackValueInt a , LGitWriteBackValueInt b ) ) module: 'pty.so'
+	^ self ffiCall: #(int fill(int* a, int* b))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> hasChar: master [ 
 
-	^ self ffiCall: #( int hasChar ( LGitWriteBackValueInt master ) ) module: 'pty.so'
+	^ self ffiCall: #(int hasChar (int* master))
+]
+
+{ #category : #'accessing platform' }
+PseudoTTYLib >> macModuleName [
+	
+	^ 'pty.so'
 ]
 
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> openMaster: master slave: slave [
 
-	^ self ffiCall: #( int openMasterSlave ( LGitWriteBackValueInt master , LGitWriteBackValueInt slave ) ) module: 'pty.so'
+	^ self ffiCall: #(int openMasterSlave(int* master ,int* slave))
 ]
 
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> openPty [
 
-	^ self ffiCall: #( int openpty_demo ( int arg ) ) module: 'pty.so'
+	^ self ffiCall: #(int openpty_demo(int arg))
 ]
 
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> openPty2: arg [
 
-	^ self ffiCall: #( int openpty_demo2 ( int arg ) ) module: 'pty.so'
+	^ self ffiCall: #(int openpty_demo2(int arg))
 ]
 
 { #category : #'as yet unclassified' }
 PseudoTTYLib >> openPty: arg [
 
-	^ self ffiCall: #( int openpty_demo ( int arg ) ) module: 'pty.so'
+	^ self ffiCall: #(int openpty_demo(int arg))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> read: master  to: buffer [
 
-	^ self ffiCall: #( int readTo ( LGitWriteBackValueInt master, char * buffer ) ) module: 'pty.so'
+	^ self ffiCall: #(int readTo(int * master, char* buffer))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> read: master  to: buffer maxLength: maxLength [
 
-	^ self ffiCall: #( int readTo ( LGitWriteBackValueInt master, char * buffer, int maxLength ) ) module: 'pty.so'
+	^ self ffiCall: #(int readTo(int* master, char* buffer, int maxLength))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> readAndPrint: master [ 
 
-	^ self ffiCall: #( int readAndPrint ( LGitWriteBackValueInt master ) ) module: 'pty.so'
+	^ self ffiCall: #(int readAndPrint(int* master))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> setWindowSizeFor: fd cols: cols rows: rows [
 
-	^ self ffiCall: #( int setWindowSize ( int fd, int cols, int rows ) ) module: 'pty.so'
+	^ self ffiCall: #(int setWindowSize(int fd, int cols, int rows))
 ]
 
 { #category : #testing }
 PseudoTTYLib >> write: master  to: buffer length: length [
 
-	^ self ffiCall: #( int writeTo ( LGitWriteBackValueInt master, char * buffer, int length ) ) module: 'pty.so'
+	^ self ffiCall: #(int writeTo(int* master, char* buffer, int length))
 ]
