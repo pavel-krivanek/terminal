@@ -3,11 +3,11 @@ I am a kind of SystemWindow intended specifically for hosting a TeletypeMorph.  
 
 
 win := TeletypeWindow open.
-	(ProcessEndpoint command: '' arguments: '') asProtocolStack
-		push:		XtermEmulator new;
-		push:		(win instVarNamed: #tty);
-		install;
-		run
+(ProcessEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
+	push:        XtermEmulator new;
+	push:        win tty;
+	install;
+	run
 "
 Class {
 	#name : #TeletypeWindow,
@@ -530,6 +530,12 @@ TeletypeWindow >> setWindowTitle: aString [
 
 	windowTitle := aString.
 	self isCollapsed ifFalse: [self setLabel: aString].
+]
+
+{ #category : #accessing }
+TeletypeWindow >> tty [
+
+	^ tty
 ]
 
 { #category : #private }

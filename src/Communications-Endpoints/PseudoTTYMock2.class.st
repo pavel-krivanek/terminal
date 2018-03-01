@@ -10,7 +10,8 @@ Class {
 { #category : #'as yet unclassified' }
 PseudoTTYMock2 class >> command: commandString arguments: argumentArray [
 
-	^ self new
+	^ self new command: commandString arguments: argumentArray
+
 ]
 
 { #category : #'input/output' }
@@ -20,11 +21,10 @@ PseudoTTYMock2 >> close [
 ]
 
 { #category : #'input/output' }
-PseudoTTYMock2 >> initialize [
+PseudoTTYMock2 >> command: commandString arguments: argumentArray [
 
-	super initialize.
 	terminal := PseudoTerminal new.
-	terminal spawn: {'/bin/bash'. '-i'}.
+	terminal spawn: {commandString. argumentArray first}.
 ]
 
 { #category : #'input/output' }

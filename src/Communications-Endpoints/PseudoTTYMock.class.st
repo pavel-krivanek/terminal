@@ -1,10 +1,10 @@
 "
 win := TeletypeWindow open.
-	(ProcessEndpoint command: '' arguments: '') asProtocolStack
-		push:		VT102Emulator new;
-		push:		(win instVarNamed: #tty);
-		install;
-		run
+(ProcessEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
+	push:        XtermEmulator new;
+	push:        win tty;
+	install;
+	run
 "
 Class {
 	#name : #PseudoTTYMock,
