@@ -29,12 +29,6 @@ PseudoTTYLib >> macModuleName [
 ]
 
 { #category : #'ffi-calls' }
-PseudoTTYLib >> spawn: commandString argument: anArgument master: master slave: slave [
-
-	^ self ffiCall: #(int spawnRedirected(int slave, char* commandString, char* anArgument))
-]
-
-{ #category : #'ffi-calls' }
 PseudoTTYLib >> spawn: commandString argument: anArgument slave: slave [
 
 	^ self ffiCall: #(int spawnRedirected(int slave, char* commandString, char* anArgument))

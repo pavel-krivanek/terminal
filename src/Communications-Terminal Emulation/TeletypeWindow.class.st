@@ -256,11 +256,6 @@ TeletypeWindow >> collapseOrExpand [
 
 { #category : #events }
 TeletypeWindow >> delete [
-
-	(tty isConnected not or: [self confirm: 'There is a session in progress.
-Would you like to disconnect and close?
-(Answering no will abandon the close request.)'])
-		ifFalse: [^self].
 	tty delete.
 	^super delete
 
