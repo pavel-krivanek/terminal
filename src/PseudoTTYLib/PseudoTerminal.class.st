@@ -32,7 +32,7 @@ PseudoTerminal >> TIOCSCTTY [
 { #category : #actions }
 PseudoTerminal >> close [
 
-	PseudoTTYLib uniqueInstance
+	PseudoTTYLibUtil uniqueInstance
 		close: master;
 		close: slave.
 		
@@ -43,7 +43,7 @@ PseudoTerminal >> close [
 { #category : #actions }
 PseudoTerminal >> configureAsTTYSlave [
 
-	PseudoTTYLib uniqueInstance
+	PseudoTTYLibUtil uniqueInstance
 		ioctlFileDescriptor: slave
 		requesting: self TIOCSCTTY
 ]
@@ -97,7 +97,7 @@ PseudoTerminal >> next: aSize [
 	buffer := ByteArray ofSize: aSize.
 
 	PTTYResourceChecker waitFor: master.
-	length := PseudoTTYLib uniqueInstance
+	length := PseudoTTYLibUtil uniqueInstance
 		read: master
 		to: buffer
 		maxLength: buffer size.
@@ -110,7 +110,7 @@ PseudoTerminal >> nextPut: aCharacterOrInteger [
 	| buffer |
 	buffer := {aCharacterOrInteger} asByteArray.
 	buffer pinInMemory.
-	^ PseudoTTYLib uniqueInstance
+	^ PseudoTTYLibUtil uniqueInstance
 		write: master
 		to: buffer
 		length: buffer size.
@@ -123,7 +123,7 @@ PseudoTerminal >> open [
 	masterBuffer := self newIntBuffer.
 	slaveBuffer := self newIntBuffer.
 	
-	PseudoTTYLib uniqueInstance
+	PseudoTTYLibUtil uniqueInstance
 		openPTYMaster: masterBuffer
 		slave: slaveBuffer.
 		
@@ -133,6 +133,34 @@ PseudoTerminal >> open [
 
 { #category : #actions }
 PseudoTerminal >> spawn: anArray [
+
+	| temporaryStdout temporaryStdin temporaryStderr |
+	self open.
+	
+	temporaryStdout := self duplicateFileDescriptor: self stdoutFileDescriptor.
+	temporaryStdin := self duplicateFileDescriptor: self stdinFileDescriptor.
+	temporaryStderr := self duplicateFileDescriptor: self stderrFileDescriptor.
+
+	self duplicateFileDescriptor: slave to: self stdoutFileDescriptor.
+	self duplicateFileDescriptor: slave to: self stdinFileDescriptor.
+	self duplicateFileDescriptor: slave to: self stderrFileDescriptor.
+
+	PseudoTTYLib uniqueInstance 
+		spawn: anArray first 
+		argument: anArray second 
+		slave: slave.
+		
+	self fsync: 0.
+	self fsync: 1.
+	self fsync: 2.
+	
+	self duplicateFileDescriptor: temporaryStdout to: self stdoutFileDescriptor.
+	self duplicateFileDescriptor: temporaryStdin to: self stdinFileDescriptor.
+	self duplicateFileDescriptor: temporaryStderr to: self stderrFileDescriptor.
+]
+
+{ #category : #actions }
+PseudoTerminal >> spawnWithFFI: anArray [
 
 	| temporaryStdout temporaryStdin temporaryStderr childPid |
 	self open.
@@ -148,7 +176,7 @@ PseudoTerminal >> spawn: anArray [
 	"Fork returns 0 if we are in the child process"
 	[childPid := self fork.
 	childPid = 0 ifTrue: [
-		PseudoTTYLib uniqueInstance setsid.
+		PseudoTTYLibUtil uniqueInstance setsid.
 		self configureAsTTYSlave.
 		slave > 2 ifTrue: [self close].
 		anArray size = 1 ifTrue: [ 
