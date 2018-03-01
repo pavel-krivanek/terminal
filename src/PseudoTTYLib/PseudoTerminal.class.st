@@ -131,20 +131,6 @@ PseudoTerminal >> open [
 ]
 
 { #category : #actions }
-PseudoTerminal >> peekToEnd [
-	| buffer length |
-	buffer := ByteArray ofSize: 32.
-
-	PTTYResourceChecker waitFor: master.
-	length := PseudoTTYLib uniqueInstance
-		read: master
-		to: buffer
-		maxLength: buffer size.
-
-	^ buffer first: length
-]
-
-{ #category : #actions }
 PseudoTerminal >> spawn: anArray [
 
 	| temporaryStdout temporaryStdin temporaryStderr childPid |

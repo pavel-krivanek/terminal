@@ -2070,7 +2070,8 @@ TeletypeMorph >> upcall: char [
 	Transcript show: 'upcall ', char printString; cr.
 ""	char printString , '   ' displayAt: 10@10.
 "
-	self put: char
+	self put: char.
+	self invalidRect: self fullBounds.
 ]
 
 { #category : #protocol }

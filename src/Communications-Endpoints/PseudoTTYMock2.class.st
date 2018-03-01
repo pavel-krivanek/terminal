@@ -45,6 +45,20 @@ PseudoTTYMock2 >> noteWindowSize: aPoint [
 		setWindowSizeFor: (master unsignedLongAt: 1) value
 		cols: aPoint x
 		rows: aPoint y"
+		
+"int setWindowSize(int fd, int cols, int rows)
+{/*
+#if defined(TIOCSWINSZ)
+  struct winsize sz;
+  sz.ws_col= cols;
+  sz.ws_row= rows;
+  sz.ws_xpixel= sz.ws_ypixel= 0;
+  if (ioctl(fd, TIOCSWINSZ, &sz) == -1)
+    return 1;
+#endif
+  return 0;
+  */
+}"
 ]
 
 { #category : #'input/output' }
