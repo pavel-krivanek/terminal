@@ -241,8 +241,8 @@ PseudoTTY >> startRead: count [
 { #category : #'input/output' }
 PseudoTTY >> upToEnd [
 	"Answer everything the subprocess has written to stdout or stderr since the last send of #upToEnd.  Note that stuff written to stderr might arrive earlier than stuff written to stdout if the former is unbuffered and the latter line buffered in the subprocess's stdio library."
-
 	| n |
+
 	[self isConnected and: [(n := self startRead: inputBuffer size;
 			primReadResult: fileHandle
 			intoBuffer: inputBuffer

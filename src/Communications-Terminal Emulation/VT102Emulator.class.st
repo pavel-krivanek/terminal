@@ -698,7 +698,7 @@ VT102Emulator >> oneArgument: arg [
 { #category : #protocol }
 VT102Emulator >> passUp: arg [
 
-	super passUp: (charMap at: arg + 1)
+	super passUp: (charMap at: arg + 1 ifAbsent: [arg])
 ]
 
 { #category : #'control sequences' }

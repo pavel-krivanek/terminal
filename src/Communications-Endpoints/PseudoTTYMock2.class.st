@@ -63,5 +63,5 @@ PseudoTTYMock2 >> noteWindowSize: aPoint [
 
 { #category : #'input/output' }
 PseudoTTYMock2 >> peekUpToEnd [
-	^ terminal next: 3000.
+	^ ((terminal next: 3000) utf8Decoded) asArray collect: [:each | each asciiValue].
 ]

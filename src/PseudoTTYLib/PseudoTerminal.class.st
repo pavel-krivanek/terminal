@@ -93,6 +93,7 @@ PseudoTerminal >> newIntBuffer [
 { #category : #accessing }
 PseudoTerminal >> next: aSize [
 	| buffer length |
+
 	buffer := ByteArray ofSize: aSize.
 
 	PTTYResourceChecker waitFor: master.
