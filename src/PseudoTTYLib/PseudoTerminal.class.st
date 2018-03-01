@@ -157,7 +157,10 @@ PseudoTerminal >> spawn: anArray [
 	childPid = 0 ifTrue: [
 		self configureAsTTYSlave.
 		self close.
-		LibC uniqueInstance execl: anArray first.
+		anArray size = 1 ifTrue: [ 
+			LibC uniqueInstance execl: anArray first ].
+		anArray size = 2 ifTrue: [ 
+			LibC uniqueInstance execl: anArray first with: anArray second ].		
 		Smalltalk exit: 1.
 	]] valueUnpreemptively.
 

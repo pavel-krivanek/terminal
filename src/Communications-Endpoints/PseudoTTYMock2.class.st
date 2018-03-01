@@ -24,7 +24,7 @@ PseudoTTYMock2 >> initialize [
 
 	super initialize.
 	terminal := PseudoTerminal new.
-	terminal spawn: {'/bin/bash'}.
+	terminal spawn: {'/bin/bash'. '-i'}.
 ]
 
 { #category : #'input/output' }

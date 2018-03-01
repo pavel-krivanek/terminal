@@ -21,7 +21,7 @@ LibC >> execl: aCommand [
 { #category : #'*PseudoTTYLib' }
 LibC >> execl: aCommand with: anArgument [
 
-	 ^self ffiCall: #(int execl(String aCommand, String aCommand, String anArgument, 0))
+	 ^self ffiCall: #(int execl(char* aCommand, char* aCommand, char* anArgument, 0)) 
 ]
 
 { #category : #'*PseudoTTYLib' }
