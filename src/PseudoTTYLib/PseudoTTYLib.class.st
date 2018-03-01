@@ -77,7 +77,7 @@ PseudoTTYLib >> openMaster: master slave: slave [
 { #category : #'ffi-calls' }
 PseudoTTYLib >> openPTYMaster: master slave: slave [
 
-	^ self ffiCall: #(int openpty(int* master ,int* slave, 0, 0))
+	^ self ffiCall: #(int openpty(int* master ,int* slave, 0, 0, 0))
 ]
 
 { #category : #'ffi-calls' }
@@ -126,6 +126,12 @@ PseudoTTYLib >> setWindowSizeFor: fd cols: cols rows: rows [
 PseudoTTYLib >> setsid [
 
 	^ self ffiCall: #(int setsid())
+]
+
+{ #category : #'accessing platform' }
+PseudoTTYLib >> unixModuleName [
+	
+	^ 'libutil.so.1'
 ]
 
 { #category : #'ffi-calls' }
