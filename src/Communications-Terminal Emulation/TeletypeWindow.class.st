@@ -29,6 +29,12 @@ Class {
 	#category : #'Communications-Terminal Emulation'
 }
 
+{ #category : #'world menu' }
+TeletypeWindow class >> icon [
+
+	^ #morph asIcon
+]
+
 { #category : #'class initialization' }
 TeletypeWindow class >> initialize [
 	"TeletypeWindow initialize"
@@ -43,6 +49,21 @@ TeletypeWindow class >> initialize [
 	
 ]
 
+{ #category : #'world menu' }
+TeletypeWindow class >> menuCommandOn: aBuilder [ 
+	"Add a custom menu item to the world menu"	
+	<worldMenu> 
+	
+	(aBuilder item: #'Terminal emulator')
+		order: 0.8; 
+		icon: self icon;  
+		parent: #'MostUsedTools';
+		keyText: 'o, c';
+		help: 'Terminal emulator';
+		action: [ self openBash ].
+
+]
+
 { #category : #'instance creation' }
 TeletypeWindow class >> new [
 
@@ -53,6 +74,21 @@ TeletypeWindow class >> new [
 TeletypeWindow class >> open [
 
 	^self new openOn: TeletypeMorph new
+]
+
+{ #category : #'instance creation' }
+TeletypeWindow class >> openBash [
+	
+	| win |
+
+	win := self open.
+	(ProcessEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
+		push: XtermEmulator new;
+		push: win tty;
+		install;
+		run.
+	^ win	
+	
 ]
 
 { #category : #'instance creation' }
