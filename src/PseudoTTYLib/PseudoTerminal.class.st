@@ -13,6 +13,22 @@ Class {
 	#category : #PseudoTTYLib
 }
 
+{ #category : #constants }
+PseudoTerminal >> TIOCSCTTY [
+
+	"536900705 is Magic numer made of flags.
+	This number was deduced from the formula:
+	
+		(inout | ((len & IOCPARM_MASK) << 16) | ((group) << 8) | (num))
+		
+	taken from:
+	 - sys/iocom.h
+	 - sys/ttycom.h
+	 - sys/ioctl.h
+	"
+	^ 536900705
+]
+
 { #category : #actions }
 PseudoTerminal >> close [
 
@@ -27,19 +43,9 @@ PseudoTerminal >> close [
 { #category : #actions }
 PseudoTerminal >> configureAsTTYSlave [
 
-	"536900705 is Magic numer made of flags.
-	This number was deduced from the formula:
-	
-		(inout | ((len & IOCPARM_MASK) << 16) | ((group) << 8) | (num))
-		
-	taken from:
-	 - sys/iocom.h
-	 - sys/ttycom.h
-	 - sys/ioctl.h
-	"
 	PseudoTTYLib uniqueInstance
 		ioctlFileDescriptor: slave
-		requesting: 536900705
+		requesting: self TIOCSCTTY
 ]
 
 { #category : #actions }
@@ -98,7 +104,7 @@ PseudoTerminal >> next: aSize [
 	^ buffer first: length
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 PseudoTerminal >> nextPut: aCharacterOrInteger [
 	| buffer |
 	buffer := {aCharacterOrInteger} asByteArray.
@@ -124,7 +130,7 @@ PseudoTerminal >> open [
 	slave := slaveBuffer unsignedLongAt: 1.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 PseudoTerminal >> peekToEnd [
 	| buffer length |
 	buffer := ByteArray ofSize: 32.
@@ -155,8 +161,9 @@ PseudoTerminal >> spawn: anArray [
 	"Fork returns 0 if we are in the child process"
 	[childPid := self fork.
 	childPid = 0 ifTrue: [
+		PseudoTTYLib uniqueInstance setsid.
 		self configureAsTTYSlave.
-		self close.
+		slave > 2 ifTrue: [self close].
 		anArray size = 1 ifTrue: [ 
 			LibC uniqueInstance execl: anArray first ].
 		anArray size = 2 ifTrue: [ 
