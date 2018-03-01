@@ -98,6 +98,17 @@ PseudoTerminal >> next: aSize [
 	^ buffer first: length
 ]
 
+{ #category : #'as yet unclassified' }
+PseudoTerminal >> nextPut: aCharacterOrInteger [
+	| buffer |
+	buffer := {aCharacterOrInteger} asByteArray.
+	buffer pinInMemory.
+	^ PseudoTTYLib uniqueInstance
+		write: master
+		to: buffer
+		length: buffer size.
+]
+
 { #category : #actions }
 PseudoTerminal >> open [
 

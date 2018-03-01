@@ -119,7 +119,7 @@ PseudoTTYLib >> readAndPrint: master [
 { #category : #'ffi-calls' }
 PseudoTTYLib >> setWindowSizeFor: fd cols: cols rows: rows [
 
-	^ self ffiCall: #(int setWindowSize(int fd, int cols, int rows))
+	"^ self ffiCall: #(int setWindowSize(int fd, int cols, int rows))"
 ]
 
 { #category : #'ffi-calls' }
@@ -135,7 +135,7 @@ PseudoTTYLib >> unixModuleName [
 ]
 
 { #category : #'ffi-calls' }
-PseudoTTYLib >> write: master  to: buffer length: length [
+PseudoTTYLib >> write: master to: buffer length: maxLength [
 
-	^ self ffiCall: #(int writeTo(int* master, char* buffer, int length))
+	^ self ffiCall: #(int write(int master, char* buffer, int maxLength))
 ]
