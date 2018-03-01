@@ -59,7 +59,7 @@ PseudoTTYLib >> hasChar: master [
 { #category : #'ffi-calls' }
 PseudoTTYLib >> ioctlFileDescriptor: aFileDescriptor requesting: aRequest [
 
-	^ self ffiCall: #(int ioctl(int aFileDescriptor, unsigned long aRequest, 0))
+	^ self ffiCall: #(int ioctl(int aFileDescriptor, ulong aRequest, 0))
 ]
 
 { #category : #'accessing platform' }
