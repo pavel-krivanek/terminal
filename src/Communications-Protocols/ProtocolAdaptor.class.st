@@ -146,10 +146,10 @@ ProtocolAdaptor >> trace [
 
 	^self
 		upBlock: [:arg |
-			Transcript cr; nextPutAll: 'up ' , arg printString; endEntry.
+			Transcript cr; nextPutAll: 'up '; nextPutAll: arg printString; endEntry.
 			up upcall: arg];
 		downBlock: [:arg |
-			Transcript cr; nextPutAll: 'down ' , arg printString; endEntry.
+			Transcript cr; nextPutAll: 'down '; nextPutAll: arg printString; endEntry.
 			down downcall: arg]
 ]
 

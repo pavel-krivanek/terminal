@@ -15,33 +15,16 @@ Class {
 { #category : #examples }
 LayeredProtocol class >> example [
 	"Send 42 down a stack and then reflect it back up."
-	"LayeredProtocol example"
+	<example>
 
 	(ProtocolAdaptor new reflect asProtocolStack
 		push: ProtocolAdaptor new trace;
 		push: ProtocolAdaptor new trace;
 		push: (ProtocolAdaptor new trace
-				upBlock: [:arg | Transcript cr; show: 'ping ' , arg printString]);
+				upBlock: [:arg | Transcript cr; show: 'ping '; show: arg printString]);
 		install;
 		run;
 		first) downcall: 42
-]
-
-{ #category : #examples }
-LayeredProtocol class >> example3 [
-	"LayeredProtocol example3"
-	"Glass teletype with local echo."
-
-	^ProtocolAdaptor new localEcho asProtocolStack
-		push:	TeletypeMorph new openInWorld;
-		install;
-		run
-]
-
-{ #category : #'instance creation' }
-LayeredProtocol class >> new [
-
-	^super new initializeProperties
 ]
 
 { #category : #'instance creation' }
@@ -73,6 +56,13 @@ LayeredProtocol >> head [
 	"Answer the head of the stack."
 
 	^self first
+]
+
+{ #category : #'initialize-release' }
+LayeredProtocol >> initialize [
+
+	super initialize.
+	self initializeProperties.
 ]
 
 { #category : #'initialize-release' }
@@ -132,10 +122,10 @@ LayeredProtocol >> propertyAt: aKey put: aValue [
 ]
 
 { #category : #accessing }
-LayeredProtocol >> push: aProto [
+LayeredProtocol >> push: aProtocol [
 	"Push a new protocol onto the head of the stack."
 
-	self addFirst: aProto
+	self addFirst: aProtocol
 ]
 
 { #category : #private }
