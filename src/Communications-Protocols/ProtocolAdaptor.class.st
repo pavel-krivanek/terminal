@@ -153,6 +153,20 @@ ProtocolAdaptor >> trace [
 			down downcall: arg]
 ]
 
+{ #category : #'canned protocols' }
+ProtocolAdaptor >> traceTo: aCollection [
+
+	"trace protocol opertaions for testing purposes"
+
+	^self
+		upBlock: [:arg |
+			aCollection add: {#up. arg}.
+			up upcall: arg];
+		downBlock: [:arg |
+			aCollection add: {#down. arg}.
+			down downcall: arg]
+]
+
 { #category : #accessing }
 ProtocolAdaptor >> upBlock: block [
 

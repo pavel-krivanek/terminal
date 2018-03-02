@@ -1,5 +1,17 @@
 "
-I am a complete protocol implemented as a stack of subprotocols.  One end of the stack (the bottom or `tail') is usually an endpoint communicating with some remote host or process.  The other end (the top or `head') is either the point of communication for my client (which reads and writes only application-oriented data) or even the client itself.
+I am a complete protocol implemented as a stack of subprotocols. 
+
+  #######################
+  #  aProtocolLayer     # <- top (head) - for client
+  #######################
+  #  aProtocolLayer     #
+  #######################
+  #  a Protocol Layer   # <- endpoint (tail) - for remote host
+  #######################
+
+One end of the stack (the bottom or `tail') is usually an endpoint communicating with some remote host or process.  The other end (the top or `head') is either the point of communication for my client (which reads and writes only application-oriented data) or even the client itself.
+
+I can be viewed as a session too.  
 
 I am created by sending my class the message #on: aSubProtocol.  You can then send me #push: aProtocol as many times as you like, to push aProtocol onto the head of my protocol stack.  When the stack is complete you must send me #install which tells me to finish creating the internal connections between each subprotocol in the stack.  Finally you send me #run which tells the entire protocol stack to start.
 "
@@ -16,6 +28,7 @@ Class {
 LayeredProtocol class >> example [
 	"Send 42 down a stack and then reflect it back up."
 	<example>
+	<ignoreForCoverage>
 
 	(ProtocolAdaptor new reflect asProtocolStack
 		push: ProtocolAdaptor new trace;
@@ -25,6 +38,14 @@ LayeredProtocol class >> example [
 		install;
 		run;
 		first) downcall: 42
+]
+
+{ #category : #'instance creation' }
+LayeredProtocol class >> new [
+
+	"I am a collection so I do not call #initialize automatically"
+
+	^ super new 	initializeProperties
 ]
 
 { #category : #'instance creation' }
@@ -39,12 +60,6 @@ LayeredProtocol >> addDown: proto [
 	^self addLast: proto
 ]
 
-{ #category : #private }
-LayeredProtocol >> addUp: proto [
-
-	^self addFirst: proto
-]
-
 { #category : #protocol }
 LayeredProtocol >> endpoint [
 
@@ -56,13 +71,6 @@ LayeredProtocol >> head [
 	"Answer the head of the stack."
 
 	^self first
-]
-
-{ #category : #'initialize-release' }
-LayeredProtocol >> initialize [
-
-	super initialize.
-	self initializeProperties.
 ]
 
 { #category : #'initialize-release' }
@@ -126,12 +134,6 @@ LayeredProtocol >> push: aProtocol [
 	"Push a new protocol onto the head of the stack."
 
 	self addFirst: aProtocol
-]
-
-{ #category : #private }
-LayeredProtocol >> removeUp [
-
-	^self removeFirst
 ]
 
 { #category : #protocol }
