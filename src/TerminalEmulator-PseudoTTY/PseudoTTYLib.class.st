@@ -42,9 +42,7 @@ PseudoTTYLib >> compile [
 
 	returnValue := LibC uniqueInstance system: 'gcc -shared ', architecture, ' -o ', moduleName, ' ', objectFile, ' -lutil'.
 	returnValue = 0 ifFalse: [ self error: errorString ].
-	
-	Smalltalk vm unloadModule: moduleName.
-	
+		
 ]
 
 { #category : #'as yet unclassified' }
