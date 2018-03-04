@@ -29,6 +29,13 @@ Class {
 	#category : #'TerminalEmulator-UI'
 }
 
+{ #category : #utilities }
+TerminalEmulator class >> compileLibrary [
+
+	"compile the required FFI library. GCC needs to be installed."
+	PseudoTTYLib uniqueInstance compile
+]
+
 { #category : #'world menu' }
 TerminalEmulator class >> icon [
 
@@ -169,7 +176,7 @@ TerminalEmulator >> collapseOrExpand [
 
 { #category : #events }
 TerminalEmulator >> delete [
-self halt.
+
 	tty delete.
 	^super delete
 
