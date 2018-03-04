@@ -22,10 +22,41 @@ Class {
 	#category : #'TerminalEmulator-PseudoTTY'
 }
 
+{ #category : #utility }
+PseudoTTYLib >> compile [
+
+	| architecture moduleName returnValue errorString objectFile |
+	
+	architecture := Smalltalk vm is64bit 
+		ifTrue: [ '-m64' ]
+		ifFalse: [ '-m32' ].
+	moduleName := OSPlatform current isMacOS
+		ifTrue: [ self macModuleName ]
+		ifFalse: [ self unixModuleName ].
+	objectFile := (self libSourceLocation basename asFileReference, 'o') basename.
+	
+	errorString := 'Library compilation error'.
+		
+	returnValue := LibC uniqueInstance system: 'gcc -c ', architecture, ' -o ', objectFile, ' ', self libSourceLocation fullName.
+	returnValue = 0 ifFalse: [ self error: errorString ].
+
+	returnValue := LibC uniqueInstance system: 'gcc -shared ', architecture, ' -o ', moduleName, ' ', objectFile, ' -lutil'.
+	returnValue = 0 ifFalse: [ self error: errorString ].
+	
+	Smalltalk vm unloadModule: moduleName.
+	
+]
+
+{ #category : #'as yet unclassified' }
+PseudoTTYLib >> libSourceLocation [
+
+	^ self class package mcWorkingCopy ancestry ancestors first package repository location / 'lib' / 'pseudoTTYLib.c'.
+]
+
 { #category : #'accessing platform' }
 PseudoTTYLib >> macModuleName [
 	
-	^ 'pty.dylib'
+	^ 'pseudoTTYLib.dylib'
 ]
 
 { #category : #'ffi-calls' }
@@ -37,5 +68,5 @@ PseudoTTYLib >> spawn: commandString argument: anArgument slave: slave [
 { #category : #'accessing platform' }
 PseudoTTYLib >> unixModuleName [
 	
-	^ 'pty.so'
+	^ 'pseudoTTYLib.so'
 ]
