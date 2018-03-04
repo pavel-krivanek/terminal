@@ -19,7 +19,7 @@ Smalltalk garbageCollect.
 Class {
 	#name : #PseudoTTYLib,
 	#superclass : #FFILibrary,
-	#category : #PseudoTTYLib
+	#category : #'TerminalEmulator-PseudoTTY'
 }
 
 { #category : #'accessing platform' }

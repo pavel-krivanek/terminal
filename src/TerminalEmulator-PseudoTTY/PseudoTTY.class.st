@@ -4,17 +4,17 @@ fork man page of osx
 https://www.unix.com/man-page/OSX/2/fork/
 "
 Class {
-	#name : #PseudoTerminal,
+	#name : #PseudoTTY,
 	#superclass : #Object,
 	#instVars : [
 		'master',
 		'slave'
 	],
-	#category : #PseudoTTYLib
+	#category : #'TerminalEmulator-PseudoTTY'
 }
 
 { #category : #constants }
-PseudoTerminal >> TIOCSCTTY [
+PseudoTTY >> TIOCSCTTY [
 
 	"536900705 is Magic numer made of flags.
 	This number was deduced from the formula:
@@ -30,7 +30,7 @@ PseudoTerminal >> TIOCSCTTY [
 ]
 
 { #category : #actions }
-PseudoTerminal >> close [
+PseudoTTY >> close [
 
 	PseudoTTYLibUtil uniqueInstance
 		close: master;
@@ -41,7 +41,7 @@ PseudoTerminal >> close [
 ]
 
 { #category : #actions }
-PseudoTerminal >> configureAsTTYSlave [
+PseudoTTY >> configureAsTTYSlave [
 
 	PseudoTTYLibUtil uniqueInstance
 		ioctlFileDescriptor: slave
@@ -49,54 +49,54 @@ PseudoTerminal >> configureAsTTYSlave [
 ]
 
 { #category : #actions }
-PseudoTerminal >> duplicateFileDescriptor: aFileDescriptor [
+PseudoTTY >> duplicateFileDescriptor: aFileDescriptor [
 
 	^ LibC uniqueInstance duplicateFileDescriptor: aFileDescriptor
 ]
 
 { #category : #actions }
-PseudoTerminal >> duplicateFileDescriptor: aFileDescriptor to: anotherFileDescriptor [
+PseudoTTY >> duplicateFileDescriptor: aFileDescriptor to: anotherFileDescriptor [
 
 	^ LibC uniqueInstance duplicateFileDescriptor: aFileDescriptor to: anotherFileDescriptor
 ]
 
 { #category : #'private-ffi' }
-PseudoTerminal >> execvp: aCommand [
+PseudoTTY >> execvp: aCommand [
 
 	^ LibC uniqueInstance execvp: aCommand
 ]
 
 { #category : #actions }
-PseudoTerminal >> fork [
+PseudoTTY >> fork [
 
 	^ LibC uniqueInstance fork
 ]
 
 { #category : #actions }
-PseudoTerminal >> fsync: aFileDescriptor [
+PseudoTTY >> fsync: aFileDescriptor [
 
 	LibC uniqueInstance fsync: aFileDescriptor
 ]
 
 { #category : #testing }
-PseudoTerminal >> isOpen [
+PseudoTTY >> isOpen [
 
 	^ master notNil
 ]
 
 { #category : #'private-ffi' }
-PseudoTerminal >> newIntBuffer [
+PseudoTTY >> newIntBuffer [
 
 	^ (FFIExternalType resolveType: 'int') newBuffer
 ]
 
 { #category : #accessing }
-PseudoTerminal >> next: aSize [
+PseudoTTY >> next: aSize [
 	| buffer length |
 
 	buffer := ByteArray ofSize: aSize.
 
-	PTTYResourceChecker waitFor: master.
+	PseudoTTYResourceChecker waitFor: master.
 	length := PseudoTTYLibUtil uniqueInstance
 		read: master
 		to: buffer
@@ -106,7 +106,7 @@ PseudoTerminal >> next: aSize [
 ]
 
 { #category : #actions }
-PseudoTerminal >> nextPut: aCharacterOrInteger [
+PseudoTTY >> nextPut: aCharacterOrInteger [
 	| buffer |
 	buffer := {aCharacterOrInteger} asByteArray.
 	buffer pinInMemory.
@@ -117,7 +117,7 @@ PseudoTerminal >> nextPut: aCharacterOrInteger [
 ]
 
 { #category : #actions }
-PseudoTerminal >> open [
+PseudoTTY >> open [
 
 	| masterBuffer slaveBuffer |
 	masterBuffer := self newIntBuffer.
@@ -132,7 +132,7 @@ PseudoTerminal >> open [
 ]
 
 { #category : #actions }
-PseudoTerminal >> spawn: anArray [
+PseudoTTY >> spawn: anArray [
 
 	| temporaryStdout temporaryStdin temporaryStderr |
 	self open.
@@ -160,7 +160,7 @@ PseudoTerminal >> spawn: anArray [
 ]
 
 { #category : #actions }
-PseudoTerminal >> spawnWithFFI: anArray [
+PseudoTTY >> spawnWithFFI: anArray [
 
 	| temporaryStdout temporaryStdin temporaryStderr childPid |
 	self open.
@@ -195,20 +195,20 @@ PseudoTerminal >> spawnWithFFI: anArray [
 	self duplicateFileDescriptor: temporaryStderr to: self stderrFileDescriptor.
 ]
 
-{ #category : #actions }
-PseudoTerminal >> stderrFileDescriptor [
+{ #category : #constants }
+PseudoTTY >> stderrFileDescriptor [
 
 	^ 2
 ]
 
-{ #category : #actions }
-PseudoTerminal >> stdinFileDescriptor [
+{ #category : #constants }
+PseudoTTY >> stdinFileDescriptor [
 
 	^ 0
 ]
 
-{ #category : #actions }
-PseudoTerminal >> stdoutFileDescriptor [
+{ #category : #constants }
+PseudoTTY >> stdoutFileDescriptor [
 
 	^ 1
 ]

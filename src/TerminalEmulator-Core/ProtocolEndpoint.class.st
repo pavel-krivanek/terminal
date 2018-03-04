@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'serverProcess'
 	],
-	#category : #'Communications-Endpoints'
+	#category : #'TerminalEmulator-Core'
 }
 
 { #category : #protocol }

@@ -7,22 +7,22 @@ win := TeletypeWindow open.
 	run
 "
 Class {
-	#name : #PseudoTTYMock,
+	#name : #PseudoTTYStreamMock,
 	#superclass : #Object,
 	#instVars : [
 		'stream'
 	],
-	#category : #'Communications-Endpoints'
+	#category : #'TerminalEmulator-Tests'
 }
 
 { #category : #'as yet unclassified' }
-PseudoTTYMock class >> command: commandString arguments: argumentArray [
+PseudoTTYStreamMock class >> command: commandString arguments: argumentArray [
 
 	^ self new
 ]
 
 { #category : #'input/output' }
-PseudoTTYMock >> initialize [
+PseudoTTYStreamMock >> initialize [
 
 	super initialize.
 	
@@ -32,19 +32,19 @@ PseudoTTYMock >> initialize [
 ]
 
 { #category : #'input/output' }
-PseudoTTYMock >> isConnected [
+PseudoTTYStreamMock >> isConnected [
 
 	^ true
 ]
 
 { #category : #'input/output' }
-PseudoTTYMock >> noteWindowSize: aPoint [
+PseudoTTYStreamMock >> noteWindowSize: aPoint [
 
 	"self primWindowSize: fileHandle cols: aPoint x rows: aPoint y"
 ]
 
 { #category : #'input/output' }
-PseudoTTYMock >> peekUpToEnd [
+PseudoTTYStreamMock >> peekUpToEnd [
 
 	^ stream upToEnd asByteArray.
 ]

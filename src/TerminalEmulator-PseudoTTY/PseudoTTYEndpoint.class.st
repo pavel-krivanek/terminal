@@ -9,54 +9,54 @@ Structure:
 
 "
 Class {
-	#name : #ProcessEndpoint,
+	#name : #PseudoTTYEndpoint,
 	#superclass : #ProtocolEndpoint,
 	#instVars : [
 		'pty',
 		'command',
 		'arguments'
 	],
-	#category : #'Communications-Endpoints'
+	#category : #'TerminalEmulator-PseudoTTY'
 }
 
 { #category : #'instance creation' }
-ProcessEndpoint class >> command: command [
+PseudoTTYEndpoint class >> command: command [
 
 	^self command: command arguments: nil
 ]
 
 { #category : #'instance creation' }
-ProcessEndpoint class >> command: command arguments: arguments [
+PseudoTTYEndpoint class >> command: command arguments: arguments [
 
 	^self new command: command arguments: arguments
 ]
 
 { #category : #'instance creation' }
-ProcessEndpoint class >> example [
+PseudoTTYEndpoint class >> example [
 	"ProcessEndpoint example upToEnd asString"
 
-	^ProcessEndpoint command: '/bin/bash' arguments: #('-ec' '/bin/pwd')
+	^PseudoTTYEndpoint command: '/bin/bash' arguments: #('-ec' '/bin/pwd')
 ]
 
 { #category : #'instance creation' }
-ProcessEndpoint class >> example2 [
+PseudoTTYEndpoint class >> example2 [
 	"ProcessEndpoint example2"
 
 	| tty |
 	^LayeredProtocol new
 		addDown: (tty := TeletypeMorph open);
 		addDown: (XtermEmulator new window: tty);
-		addDown: (ProcessEndpoint command: '/bin/bash' arguments: #('-i'));
+		addDown: (PseudoTTYEndpoint command: '/bin/bash' arguments: #('-i'));
 		install;
 		run
 ]
 
 { #category : #'instance creation' }
-ProcessEndpoint class >> example3 [
+PseudoTTYEndpoint class >> example3 [
 	"ProcessEndpoint example3"
 
 	^(LayeredProtocol
-		on:		(ProcessEndpoint command: '/bin/bash' arguments: #('-i')))
+		on:		(PseudoTTYEndpoint command: '/bin/bash' arguments: #('-i')))
 		push:	XtermEmulator new;
 		push:	TeletypeMorph open;
 		install;
@@ -64,28 +64,28 @@ ProcessEndpoint class >> example3 [
 ]
 
 { #category : #protocol }
-ProcessEndpoint >> close [
+PseudoTTYEndpoint >> close [
 
 	pty close.
 ]
 
 { #category : #'initialize-release' }
-ProcessEndpoint >> command: cmd arguments: args [
+PseudoTTYEndpoint >> command: cmd arguments: args [
 
-	(pty := PseudoTTYMock2 command: cmd arguments: args)
+	(pty := PseudoTTYStream command: cmd arguments: args)
 		isNil ifTrue: [^self error: 'could not create process'].
 	command := cmd.
 	arguments := args.
 ]
 
 { #category : #protocol }
-ProcessEndpoint >> downcall: char [
+PseudoTTYEndpoint >> downcall: char [
 
 	pty nextPut: char
 ]
 
 { #category : #'server loop' }
-ProcessEndpoint >> getData [
+PseudoTTYEndpoint >> getData [
 	"Answer the next chunk of stuff from the pty or nil if the pty has been closed."
 
 	| buf |
@@ -96,19 +96,19 @@ ProcessEndpoint >> getData [
 ]
 
 { #category : #protocol }
-ProcessEndpoint >> isConnected [
+PseudoTTYEndpoint >> isConnected [
 
 	^pty isConnected
 ]
 
 { #category : #protocol }
-ProcessEndpoint >> name [
+PseudoTTYEndpoint >> name [
 
 	^pty name
 ]
 
 { #category : #protocol }
-ProcessEndpoint >> note: aSymbol with: anObject [
+PseudoTTYEndpoint >> note: aSymbol with: anObject [
 
 	super note: aSymbol with: anObject.
 	aSymbol == #windowSize		ifTrue: [^pty noteWindowSize: anObject "Point"].
@@ -117,7 +117,7 @@ ProcessEndpoint >> note: aSymbol with: anObject [
 ]
 
 { #category : #private }
-ProcessEndpoint >> savePreferences: dict [
+PseudoTTYEndpoint >> savePreferences: dict [
 
 	dict
 		at: #endpointClass put: self class name;

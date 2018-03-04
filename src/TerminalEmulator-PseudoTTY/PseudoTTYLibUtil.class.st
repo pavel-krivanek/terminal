@@ -1,29 +1,10 @@
 "
-FFIMethodRegistry resetAll.
-Smalltalk vm listLoadedModules.
-Smalltalk vm unloadModule: 'pty.so'.
-Smalltalk garbageCollect.
-
-LibC uniqueInstance system: 'gcc -c -m32 pty.c'.
-LibC uniqueInstance system: 'gcc -shared -m32 -o pty.so pty.o -lutil '.
-
-master := LGitWriteBackValueInt new.
-slave := LGitWriteBackValueInt new.
-
-pty := PseudoTTY uniqueInstance.
-pty openMaster: master slave: slave.
-
-pty hasChar: master.
-pty readAndPrint: master.
-
-pty closeMaster: master slave: slave.
-
-
+An UFFI interface to LibC subset provided by 'libutil' library on Linux
 "
 Class {
 	#name : #PseudoTTYLibUtil,
 	#superclass : #FFILibrary,
-	#category : #PseudoTTYLib
+	#category : #'TerminalEmulator-PseudoTTY'
 }
 
 { #category : #'ffi-calls' }

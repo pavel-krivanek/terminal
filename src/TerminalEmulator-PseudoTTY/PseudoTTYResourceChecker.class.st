@@ -1,5 +1,8 @@
+"
+AioPlugin driven file read/write operations
+"
 Class {
-	#name : #PTTYResourceChecker,
+	#name : #PseudoTTYResourceChecker,
 	#superclass : #Object,
 	#instVars : [
 		'fileDescriptors',
@@ -9,21 +12,21 @@ Class {
 		'write',
 		'exceptions'
 	],
-	#category : #PseudoTTYLib
+	#category : #'TerminalEmulator-PseudoTTY'
 }
 
 { #category : #'waiting-specific' }
-PTTYResourceChecker class >> waitFor: aFileDescriptor [
+PseudoTTYResourceChecker class >> waitFor: aFileDescriptor [
 	^ self waitForAll: {aFileDescriptor}
 ]
 
 { #category : #'waiting-specific' }
-PTTYResourceChecker class >> waitForAll: someFileDescriptors [
+PseudoTTYResourceChecker class >> waitForAll: someFileDescriptors [
 	^ self waitForAll: someFileDescriptors forRead: true write: false orException: true.
 ]
 
 { #category : #'waiting-specific' }
-PTTYResourceChecker class >> waitForAll: someFileDescriptors forRead: read write: write orException: exceptions. [
+PseudoTTYResourceChecker class >> waitForAll: someFileDescriptors forRead: read write: write orException: exceptions. [
 	^ self new
 		fileDescriptors: someFileDescriptors;
 		read: read;
@@ -33,40 +36,40 @@ PTTYResourceChecker class >> waitForAll: someFileDescriptors forRead: read write
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> cleanUp [
+PseudoTTYResourceChecker >> cleanUp [
 	fileDescriptors do: [ :fd | self primitiveAioDisable: fd ].
 	Smalltalk unregisterExternalObject: semaphore.
 	semaphore := nil
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> enable [
+PseudoTTYResourceChecker >> enable [
 	fileDescriptors
 		do: [ :fd | self primitiveAioEnable: fd semaphoreIndex: semaphoreIndex isExternal: true ]
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> exceptions [
+PseudoTTYResourceChecker >> exceptions [
 	^ exceptions
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> exceptions: anObject [
+PseudoTTYResourceChecker >> exceptions: anObject [
 	exceptions := anObject
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> fileDescriptors [
+PseudoTTYResourceChecker >> fileDescriptors [
 	^ fileDescriptors
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> fileDescriptors: anObject [
+PseudoTTYResourceChecker >> fileDescriptors: anObject [
 	fileDescriptors := anObject
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> handle [
+PseudoTTYResourceChecker >> handle [
 	fileDescriptors
 		do: [ :fd | 
 			self
@@ -77,42 +80,42 @@ PTTYResourceChecker >> handle [
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> initialize [
+PseudoTTYResourceChecker >> initialize [
 	read := true.
 	write := false.
 	exceptions := true.
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> primitiveAioDisable: fd [
+PseudoTTYResourceChecker >> primitiveAioDisable: fd [
 	<primitive: primitiveAioDisable  module: 'AioPlugin'>
 	^ self primitiveFail.
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> primitiveAioEnable: fd semaphoreIndex: index isExternal: external [
+PseudoTTYResourceChecker >> primitiveAioEnable: fd semaphoreIndex: index isExternal: external [
 	<primitive: primitiveAioEnable  module: 'AioPlugin'>
 	^ self primitiveFail.
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> primitiveAioHandle: fd exception: exception read: read write: write [
+PseudoTTYResourceChecker >> primitiveAioHandle: fd exception: exception read: read write: write [
 	<primitive: primitiveAioHandle  module: 'AioPlugin'>
 	^ self primitiveFail.
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> read [
+PseudoTTYResourceChecker >> read [
 	^ read
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> read: anObject [
+PseudoTTYResourceChecker >> read: anObject [
 	read := anObject
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> wait [
+PseudoTTYResourceChecker >> wait [
 	[
 		semaphore := Semaphore new.
 		semaphoreIndex := Smalltalk registerExternalObject: semaphore.
@@ -127,11 +130,11 @@ PTTYResourceChecker >> wait [
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> write [
+PseudoTTYResourceChecker >> write [
 	^ write
 ]
 
 { #category : #accessing }
-PTTYResourceChecker >> write: anObject [
+PseudoTTYResourceChecker >> write: anObject [
 	write := anObject
 ]

@@ -15,7 +15,7 @@ Class {
 	#classVars : [
 		'InstanceList'
 	],
-	#category : #'Communications-Endpoints'
+	#category : #'TerminalEmulator-Network'
 }
 
 { #category : #examples }
