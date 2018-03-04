@@ -45,7 +45,7 @@ PseudoTTYLib >> compile [
 		
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 PseudoTTYLib >> libSourceLocation [
 
 	^ self class package mcWorkingCopy ancestry ancestors first package repository location / 'lib' / 'pseudoTTYLib.c'.
