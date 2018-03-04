@@ -1,7 +1,7 @@
 "
 win := TeletypeWindow open.
 (ProcessEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
-	push:        XtermEmulator new;
+	push:        TerminalEmulatorXterm new;
 	push:        win tty;
 	install;
 	run

@@ -44,8 +44,8 @@ PseudoTTYEndpoint class >> example2 [
 
 	| tty |
 	^LayeredProtocol new
-		addDown: (tty := TeletypeMorph open);
-		addDown: (XtermEmulator new window: tty);
+		addDown: (tty := TerminalEmulatorMorph open);
+		addDown: (TerminalEmulatorXterm new window: tty);
 		addDown: (PseudoTTYEndpoint command: '/bin/bash' arguments: #('-i'));
 		install;
 		run
@@ -57,8 +57,8 @@ PseudoTTYEndpoint class >> example3 [
 
 	^(LayeredProtocol
 		on:		(PseudoTTYEndpoint command: '/bin/bash' arguments: #('-i')))
-		push:	XtermEmulator new;
-		push:	TeletypeMorph open;
+		push:	TerminalEmulatorXterm new;
+		push:	TerminalEmulatorMorph open;
 		install;
 		run
 ]

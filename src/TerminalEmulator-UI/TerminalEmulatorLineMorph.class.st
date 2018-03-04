@@ -1,7 +1,7 @@
 "
 I display a string with optional foreground, background and emphasis changes.  I shouldn't really exist but StringMorph doesn't know how to change colour or emphasis in mid-run and cannot affect its background colour at all.  On the other hand, TextMorph does way too much and wants to take over keyboard and mouse input and a whole bunch of other useless stuff such as line wrapping.  I could have used Text as my underlying representation and reused TextMorph's scanner except that it works on paragraphs (not linear text) and can't change background colour anyway.  Ho hum.  Short of installing a whole bunch of new rendering methods in the various canvases to plass explicit background colour information, I guess I just have to do everything myself.  C'est la vie, I suppose.
 
-	SimpleTextMorph example
+	TerminalEmulatorLineMorph example
 
 Structure:
 	font		StrikeFont		-- the font I render with (this had better be monospaced!)
@@ -12,7 +12,7 @@ Structure:
 	emRuns		Array			-- emphasis changes (ditto)
 "
 Class {
-	#name : #SimpleTextMorph,
+	#name : #TerminalEmulatorLineMorph,
 	#superclass : #Morph,
 	#instVars : [
 		'font',
@@ -34,30 +34,30 @@ Class {
 }
 
 { #category : #'instance creation' }
-SimpleTextMorph class >> contents: lineState [
+TerminalEmulatorLineMorph class >> contents: lineState [
 
 	^super new contents: lineState
 ]
 
 { #category : #accessing }
-SimpleTextMorph class >> defaultFont [
+TerminalEmulatorLineMorph class >> defaultFont [
 
 	^DefaultStyle
 ]
 
 { #category : #accessing }
-SimpleTextMorph class >> defaultFont: fontName [
+TerminalEmulatorLineMorph class >> defaultFont: fontName [
 
 	DefaultStyle := fontName
 ]
 
 { #category : #examples }
-SimpleTextMorph class >> example [
+TerminalEmulatorLineMorph class >> example [
 
-	"SimpleTextMorph example"
+	"TerminalEmulatorLineMorph example"
 
 	| m |
-	(m := SimpleTextMorph new) lineState string: (String streamContents: [:s |
+	(m := TerminalEmulatorLineMorph new) lineState string: (String streamContents: [:s |
 			0 to: 79 do: [:i | s nextPut: (Character value: i \\ 26 + $a asciiValue)]]).
 	1 to: 80 do: [:i |
 		m lineState foregroundAt: i put: i \\ 8.
@@ -67,12 +67,12 @@ SimpleTextMorph class >> example [
 ]
 
 { #category : #examples }
-SimpleTextMorph class >> example2 [
+TerminalEmulatorLineMorph class >> example2 [
 	"One way (the wrong way) to implement blinking cursors."
-	"SimpleTextMorph example2"
+	"TerminalEmulatorLineMorph example2"
 
 	| m |
-	(m := SimpleTextMorph new) lineState string: ('Hello, world.' padded: #right to: 80 with: $ ).
+	(m := TerminalEmulatorLineMorph new) lineState string: ('Hello, world.' padded: #right to: 80 with: $ ).
 	m openInWorld; fitContents.
 	[10 timesRepeat:
 		[m lineState backgroundAt: 14 put: 0.  m flush.
@@ -84,11 +84,11 @@ SimpleTextMorph class >> example2 [
 ]
 
 { #category : #examples }
-SimpleTextMorph class >> example3 [
+TerminalEmulatorLineMorph class >> example3 [
 	"SimpleTextMorph example3"
 
 	| m |
-	(m := SimpleTextMorph new) lineState string: ('Hello, world.' padded: #right to: 80 with: $ ).
+	(m := TerminalEmulatorLineMorph new) lineState string: ('Hello, world.' padded: #right to: 80 with: $ ).
 	m openInWorld; fitContents.
 	m cursorColour: Preferences textHighlightColor.
 	m lineState cursorCol: 14.
@@ -96,7 +96,7 @@ SimpleTextMorph class >> example3 [
 ]
 
 { #category : #private }
-SimpleTextMorph class >> fixedFontDefinition [
+TerminalEmulatorLineMorph class >> fixedFontDefinition [
 	"This is -misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso8859-1 (aka 'fixed')"
 
 	^'STARTFONT 2.1
@@ -4616,8 +4616,8 @@ ENDFONT
 ]
 
 { #category : #'class initialisation' }
-SimpleTextMorph class >> initialize [
-	"SimpleTextMorph initialize"
+TerminalEmulatorLineMorph class >> initialize [
+	"TerminalEmulatorLineMorph initialize"
 
 	"ISO 6429 colour indices"
 	Foreground := #(black red green yellow blue magenta cyan white) collect: [:c | Color perform: c].
@@ -4640,19 +4640,19 @@ SimpleTextMorph class >> initialize [
 ]
 
 { #category : #'instance creation' }
-SimpleTextMorph class >> new [
+TerminalEmulatorLineMorph class >> new [
 
 	^super new initialize
 ]
 
 { #category : #private }
-SimpleTextMorph >> backgroundColourAt: i [
+TerminalEmulatorLineMorph >> backgroundColourAt: i [
 
 	^bgMap at: i + 1
 ]
 
 { #category : #'initialize-release' }
-SimpleTextMorph >> contents: aLineState [
+TerminalEmulatorLineMorph >> contents: aLineState [
 	"Initialize the receiver with the given contents."
 
 	super initialize.
@@ -4667,19 +4667,19 @@ SimpleTextMorph >> contents: aLineState [
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> cursorColour: cc [
+TerminalEmulatorLineMorph >> cursorColour: cc [
 
 	cursorColour := cc.
 ]
 
 { #category : #private }
-SimpleTextMorph >> defaultFont [
+TerminalEmulatorLineMorph >> defaultFont [
 
 	^ (LogicalFont familyName: 'Source Code Pro' pointSize: 8).
 ]
 
 { #category : #drawing }
-SimpleTextMorph >> drawCursorOn: aCanvas [
+TerminalEmulatorLineMorph >> drawCursorOn: aCanvas [
 
 	| cc bg fg |
 	lineState cursorColumn > 0 ifTrue:
@@ -4706,7 +4706,7 @@ SimpleTextMorph >> drawCursorOn: aCanvas [
 ]
 
 { #category : #drawing }
-SimpleTextMorph >> drawLineOn: aCanvas [
+TerminalEmulatorLineMorph >> drawLineOn: aCanvas [
 
 	| port tmp |
 	self runsDo: [:l :r :inputFg :inputBg :em |
@@ -4730,7 +4730,7 @@ SimpleTextMorph >> drawLineOn: aCanvas [
 ]
 
 { #category : #drawing }
-SimpleTextMorph >> drawOn: aCanvas [
+TerminalEmulatorLineMorph >> drawOn: aCanvas [
 
 	super drawOn: aCanvas.
 	self
@@ -4739,13 +4739,13 @@ SimpleTextMorph >> drawOn: aCanvas [
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> ec: aBoolean [
+TerminalEmulatorLineMorph >> ec: aBoolean [
 
 	aBoolean ifTrue: [self emacsColours] ifFalse: [self normalColours]
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> emacsColours [
+TerminalEmulatorLineMorph >> emacsColours [
 
 	fgMap := Foreground2 shallowCopy.
 	bgMap := Background2 shallowCopy.
@@ -4753,14 +4753,14 @@ SimpleTextMorph >> emacsColours [
 ]
 
 { #category : #drawing }
-SimpleTextMorph >> fitContents [
+TerminalEmulatorLineMorph >> fitContents [
 	"If the receiver has changed width then update my geometry."
 
 	self extent: lineState stringSize * pitch @ font height
 ]
 
 { #category : #private }
-SimpleTextMorph >> flush [
+TerminalEmulatorLineMorph >> flush [
 
 	lineState changed
 		ifTrue:
@@ -4769,27 +4769,27 @@ SimpleTextMorph >> flush [
 ]
 
 { #category : #private }
-SimpleTextMorph >> foregroundColourAt: i [
+TerminalEmulatorLineMorph >> foregroundColourAt: i [
 
 	^fgMap at: i + 1
 ]
 
 { #category : #'initialize-release' }
-SimpleTextMorph >> initialize [
+TerminalEmulatorLineMorph >> initialize [
 	"Initialize the receiver with empty contents."
 
-	self contents: SimpleTextState new.
+	self contents: TerminalEmulatorTextState new.
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> lineState [
+TerminalEmulatorLineMorph >> lineState [
 	"Answer an opaque representation of the line contents"
 
 	^lineState
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> lineState: state [
+TerminalEmulatorLineMorph >> lineState: state [
 	"Restore the line contents from the given state"
 
 	lineState := state.
@@ -4797,7 +4797,7 @@ SimpleTextMorph >> lineState: state [
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> normalColours [
+TerminalEmulatorLineMorph >> normalColours [
 
 	fgMap := Foreground shallowCopy.
 	bgMap := Background shallowCopy.
@@ -4805,7 +4805,7 @@ SimpleTextMorph >> normalColours [
 ]
 
 { #category : #drawing }
-SimpleTextMorph >> oldDrawLineOn: aCanvas [
+TerminalEmulatorLineMorph >> oldDrawLineOn: aCanvas [
 
 	| port tmp |
 	self runsDo: [:l :r :fg :bg :em |
@@ -4826,7 +4826,7 @@ SimpleTextMorph >> oldDrawLineOn: aCanvas [
 ]
 
 { #category : #private }
-SimpleTextMorph >> reversePolarity [
+TerminalEmulatorLineMorph >> reversePolarity [
 	"It's almost daybreak and my method names are getting silly."
 
 	fgMap swap: 1 with: fgMap size.
@@ -4834,7 +4834,7 @@ SimpleTextMorph >> reversePolarity [
 ]
 
 { #category : #private }
-SimpleTextMorph >> runsDo: aBlock [
+TerminalEmulatorLineMorph >> runsDo: aBlock [
 
 	| fg fgr bg bgr em emr left stringSize |
 	stringSize := lineState stringSize.
@@ -4861,7 +4861,7 @@ SimpleTextMorph >> runsDo: aBlock [
 ]
 
 { #category : #accessing }
-SimpleTextMorph >> rv: aBoolean [
+TerminalEmulatorLineMorph >> rv: aBoolean [
 
 	aBoolean ~~ rv
 		ifTrue:
@@ -4870,7 +4870,7 @@ SimpleTextMorph >> rv: aBoolean [
 ]
 
 { #category : #selection }
-SimpleTextMorph >> selectionColumnAt: screenPosition [
+TerminalEmulatorLineMorph >> selectionColumnAt: screenPosition [
 	"Answer the column of the character at the given screen screenPosition.  If the screenPosition is within our bounds vertically but outside to the left or right then answer the first or last + 1 column respectively.  If the screenPosition is beyond lastCol then answer our width + 1."
 
 	| x y col |

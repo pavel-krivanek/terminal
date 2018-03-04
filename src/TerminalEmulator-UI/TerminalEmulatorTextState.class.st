@@ -1,5 +1,5 @@
 Class {
-	#name : #SimpleTextState,
+	#name : #TerminalEmulatorTextState,
 	#superclass : #Object,
 	#instVars : [
 		'string',
@@ -16,25 +16,25 @@ Class {
 }
 
 { #category : #'instance creation' }
-SimpleTextState class >> new [
+TerminalEmulatorTextState class >> new [
 
 	^super new initialize
 ]
 
 { #category : #'instance creation' }
-SimpleTextState class >> new: size [
+TerminalEmulatorTextState class >> new: size [
 
 	^self string: (String new: size withAll: $ )
 ]
 
 { #category : #'instance creation' }
-SimpleTextState class >> string: aString [
+TerminalEmulatorTextState class >> string: aString [
 
 	^super new initialize: aString
 ]
 
 { #category : #selection }
-SimpleTextState >> appendSelectionTo: aStream [
+TerminalEmulatorTextState >> appendSelectionTo: aStream [
 
 	selection isNil ifTrue: [^self].	"no selection"
 	selection first > lastCol ifTrue: [^aStream cr].	"only the end of line is selected"
@@ -43,7 +43,7 @@ SimpleTextState >> appendSelectionTo: aStream [
 ]
 
 { #category : #accessing }
-SimpleTextState >> at: index insert: char fg: fg bg: bg em: em [
+TerminalEmulatorTextState >> at: index insert: char fg: fg bg: bg em: em [
 
 	stringSize - 1 to: index by: -1 do: [:i |
 		string at: i + 1 put: (string at: i).
@@ -58,7 +58,7 @@ SimpleTextState >> at: index insert: char fg: fg bg: bg em: em [
 ]
 
 { #category : #accessing }
-SimpleTextState >> at: index put: char fg: fg bg: bg em: em [
+TerminalEmulatorTextState >> at: index put: char fg: fg bg: bg em: em [
 
 	((string at: index) ~~ char
 			or: [(fgRuns at: index) ~~ fg
@@ -74,7 +74,7 @@ SimpleTextState >> at: index put: char fg: fg bg: bg em: em [
 ]
 
 { #category : #accessing }
-SimpleTextState >> atAllPut: char fg: fg bg: bg em: em [
+TerminalEmulatorTextState >> atAllPut: char fg: fg bg: bg em: em [
 	"Update the receiver's string, colour and emphasis."
 
 	string from: 1 to: stringSize put: char.
@@ -86,13 +86,13 @@ SimpleTextState >> atAllPut: char fg: fg bg: bg em: em [
 ]
 
 { #category : #accessing }
-SimpleTextState >> background: bgIndex [
+TerminalEmulatorTextState >> background: bgIndex [
 
 	1 to: stringSize do: [:i | self backgroundAt: i put: bgIndex]
 ]
 
 { #category : #accessing }
-SimpleTextState >> backgroundAt: index put: c [
+TerminalEmulatorTextState >> backgroundAt: index put: c [
 
 	(bgRuns at: index) ~~ c
 		ifTrue:
@@ -101,7 +101,7 @@ SimpleTextState >> backgroundAt: index put: c [
 ]
 
 { #category : #accessing }
-SimpleTextState >> basicAt: index put: char fg: fg bg: bg em: em [
+TerminalEmulatorTextState >> basicAt: index put: char fg: fg bg: bg em: em [
 
 	string at: index put: char.
 	self foregroundAt: index put: fg.
@@ -111,25 +111,25 @@ SimpleTextState >> basicAt: index put: char fg: fg bg: bg em: em [
 ]
 
 { #category : #accessing }
-SimpleTextState >> bgRuns [
+TerminalEmulatorTextState >> bgRuns [
 
 	^bgRuns
 ]
 
 { #category : #accessing }
-SimpleTextState >> changed [
+TerminalEmulatorTextState >> changed [
 
 	^changed
 ]
 
 { #category : #accessing }
-SimpleTextState >> changed: aBoolean [
+TerminalEmulatorTextState >> changed: aBoolean [
 
 	changed := aBoolean
 ]
 
 { #category : #selection }
-SimpleTextState >> clearSelection [
+TerminalEmulatorTextState >> clearSelection [
 
 	selection isNil ifTrue: [^self].
 	selection first to: selection last do: [:i | emRuns at: i put: ((emRuns at: i) bitXor: 64)].
@@ -138,26 +138,26 @@ SimpleTextState >> clearSelection [
 ]
 
 { #category : #copying }
-SimpleTextState >> copy [
+TerminalEmulatorTextState >> copy [
 
 	^self deepCopy
 ]
 
 { #category : #accessing }
-SimpleTextState >> cursorCol: x [
+TerminalEmulatorTextState >> cursorCol: x [
 
 	cursorCol := x.
 	changed := true
 ]
 
 { #category : #accessing }
-SimpleTextState >> cursorColumn [
+TerminalEmulatorTextState >> cursorColumn [
 
 	^cursorCol
 ]
 
 { #category : #accessing }
-SimpleTextState >> deleteCharAt: index [
+TerminalEmulatorTextState >> deleteCharAt: index [
 	"Delete the character at index, moving anything to the right of it left one column."
 
 	index to: stringSize - 1 do: [:i |
@@ -171,19 +171,19 @@ SimpleTextState >> deleteCharAt: index [
 ]
 
 { #category : #accessing }
-SimpleTextState >> emRuns [
+TerminalEmulatorTextState >> emRuns [
 
 	^emRuns
 ]
 
 { #category : #accessing }
-SimpleTextState >> fgRuns [
+TerminalEmulatorTextState >> fgRuns [
 
 	^fgRuns
 ]
 
 { #category : #selection }
-SimpleTextState >> findFirstInClass: charClasses from: start [
+TerminalEmulatorTextState >> findFirstInClass: charClasses from: start [
 	"Find the index of the leftmost character in the sequence of characters beginning at start that all belong to the same class in charClasses."
 
 	| charClass |
@@ -193,14 +193,14 @@ SimpleTextState >> findFirstInClass: charClasses from: start [
 ]
 
 { #category : #private }
-SimpleTextState >> findLastColumn [
+TerminalEmulatorTextState >> findLastColumn [
 
 	stringSize to: 1 by: -1 do: [ :i | (string at: i) == $  ifFalse: [^lastCol := i]].
 	^lastCol := 0.
 ]
 
 { #category : #selection }
-SimpleTextState >> findLastInClass: charClasses from: start [
+TerminalEmulatorTextState >> findLastInClass: charClasses from: start [
 	"Find the index of the rightmost character in the sequence of characters beginning at start that all belong to the same class in charClasses."
 
 	| charClass |
@@ -210,13 +210,13 @@ SimpleTextState >> findLastInClass: charClasses from: start [
 ]
 
 { #category : #accessing }
-SimpleTextState >> foreground: fbIndex [
+TerminalEmulatorTextState >> foreground: fbIndex [
 
 	1 to: stringSize do: [:i | self foregroundAt: i put: fbIndex]
 ]
 
 { #category : #accessing }
-SimpleTextState >> foregroundAt: index put: c [
+TerminalEmulatorTextState >> foregroundAt: index put: c [
 
 	(fgRuns at: index) ~~ c
 		ifTrue:
@@ -225,7 +225,7 @@ SimpleTextState >> foregroundAt: index put: c [
 ]
 
 { #category : #accessing }
-SimpleTextState >> from: start to: stop put: char fg: fg bg: bg em: em [
+TerminalEmulatorTextState >> from: start to: stop put: char fg: fg bg: bg em: em [
 
 	string from: start to: stop put: char.
 	fgRuns from: start to: stop put: fg.
@@ -235,14 +235,14 @@ SimpleTextState >> from: start to: stop put: char fg: fg bg: bg em: em [
 ]
 
 { #category : #'initialize-release' }
-SimpleTextState >> initialize [
+TerminalEmulatorTextState >> initialize [
 	"Initialize the receiver with empty contents."
 
 	self initialize: (String new: 0)
 ]
 
 { #category : #'initialize-release' }
-SimpleTextState >> initialize: aString [
+TerminalEmulatorTextState >> initialize: aString [
 	"Initialize the receiver with the given contents."
 
 	string := aString.
@@ -257,7 +257,7 @@ SimpleTextState >> initialize: aString [
 ]
 
 { #category : #accessing }
-SimpleTextState >> insertAt: index [
+TerminalEmulatorTextState >> insertAt: index [
 
 	stringSize - 1 to: index by: -1 do: [:i |
 		string at: i + 1 put: (string at: i).
@@ -269,21 +269,21 @@ SimpleTextState >> insertAt: index [
 ]
 
 { #category : #accessing }
-SimpleTextState >> lastColumn [
+TerminalEmulatorTextState >> lastColumn [
 	"Answer the rightmost column into which a character has been explicitly written."
 
 	^lastCol
 ]
 
 { #category : #accessing }
-SimpleTextState >> lastColumn: col [
+TerminalEmulatorTextState >> lastColumn: col [
 	"Somebody has deleted everythig from col onwards."
 
 	lastCol := col
 ]
 
 { #category : #selection }
-SimpleTextState >> selectFrom: left to: right [
+TerminalEmulatorTextState >> selectFrom: left to: right [
 
 	selection isNil ifFalse: [self clearSelection].
 	selection := Array with: left with: right.
@@ -292,21 +292,21 @@ SimpleTextState >> selectFrom: left to: right [
 ]
 
 { #category : #accessing }
-SimpleTextState >> selection [
+TerminalEmulatorTextState >> selection [
 	"Answer the selection range for this line."
 
 	^selection
 ]
 
 { #category : #selection }
-SimpleTextState >> selectionSpansColumn: index [
+TerminalEmulatorTextState >> selectionSpansColumn: index [
 	"Answer whether index is inside the current selection range."
 
 	^selection notNil and: [index >= selection first and: [index <= selection last]]
 ]
 
 { #category : #accessing }
-SimpleTextState >> setWidth: width [
+TerminalEmulatorTextState >> setWidth: width [
 
 	string size < width
 		ifTrue: [self string: (string forceTo: width paddingWith: $ )]
@@ -317,13 +317,13 @@ SimpleTextState >> setWidth: width [
 ]
 
 { #category : #accessing }
-SimpleTextState >> string [
+TerminalEmulatorTextState >> string [
 
 	^string
 ]
 
 { #category : #accessing }
-SimpleTextState >> string: aString [
+TerminalEmulatorTextState >> string: aString [
 	"Replace the receiver's string with aString.  If the receiver changes width then also modify the colours and emphasis retaining the overlapping portions and extending with default colours and emphasis, and then update the geometry.  Reset lastCol to be the index of the last non-whitespace in aString."
 
 	| oldSize newSize |
@@ -346,7 +346,7 @@ SimpleTextState >> string: aString [
 ]
 
 { #category : #accessing }
-SimpleTextState >> stringSize [
+TerminalEmulatorTextState >> stringSize [
 
 	^stringSize
 ]

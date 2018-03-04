@@ -1,14 +1,14 @@
 "
 I emulate a VT102 terminal.  The VT102 is an enhanced VT100 with additional screen editing functions, especially useful for full-screen editors (like Emacs) running over slow connections.
 
-I expect to be inserted somewhere in the middle of a protocol stack.  My low procotol (usually some kind of remote login protocol) sends me #upcall: aCharacter to display aCharacter.  I filter out control sequences (sending appropriate messages to my window (usually a TeletypeMorph) to effect cursor movement, character attribute manipulation, screen editing and so on) or simply pass printing characters up to my high protocol (usually the same TeletypeMorph as my window) verbatim for display.  I accept keyboard input from my high protocol (again usually my window) which I pass down to my low protocol with conversion from Squeak keycodes to ANSI or DEC escape sequences representing cursor and other special keys.
+I expect to be inserted somewhere in the middle of a protocol stack.  My low procotol (usually some kind of remote login protocol) sends me #upcall: aCharacter to display aCharacter.  I filter out control sequences (sending appropriate messages to my window (usually a TerminalEmulatorMorph) to effect cursor movement, character attribute manipulation, screen editing and so on) or simply pass printing characters up to my high protocol (usually the same TerminalEmulatorMorph as my window) verbatim for display.  I accept keyboard input from my high protocol (again usually my window) which I pass down to my low protocol with conversion from Squeak keycodes to ANSI or DEC escape sequences representing cursor and other special keys.
 
 I'm a subclass of Protocol, which is a subclass of StateMachine, since terminal emulation is simply a matter of recognising particular patterns (`escape sequences') in a stream of characters (as is any kind of `protocol').
 
 I recognise the escape sequences as defined in: ""VT102 Video Terminal User Guide"", 3rd edition, Digital Equipment Corporation, February 1982, part number EK-VT102-UG-003.  When in VT52 mode I also recognise the escape sequences defined in ""DECscope User's Manual"", 1st edition, Digital Equipment Corporation, April 1976, part number EK-VT5X-OP-001.  (If you don't own copies of these historic documents then Shame On You! ;-)
 "
 Class {
-	#name : #VT102Emulator,
+	#name : #TerminalEmulatorVT102,
 	#superclass : #StatefulProtocol,
 	#instVars : [
 		'arguments',
@@ -34,8 +34,8 @@ Class {
 }
 
 { #category : #'class initialization' }
-VT102Emulator class >> initialize [
-	"VT102Emulator initialize"
+TerminalEmulatorVT102 class >> initialize [
+	"TerminalEmulatorVT102 initialize"
 
 	"protocol"
 	States := self protocol compile.
@@ -50,14 +50,14 @@ VT102Emulator class >> initialize [
 ]
 
 { #category : #'instance creation' }
-VT102Emulator class >> new [
+TerminalEmulatorVT102 class >> new [
 	"VT100Emulator new"
 
 	^super new initialize initialState: States
 ]
 
 { #category : #'class initialization' }
-VT102Emulator class >> protocol [
+TerminalEmulatorVT102 class >> protocol [
 
 	| desc |
 	desc := StatefulProtocolDescription initialState: #relax.
@@ -150,13 +150,13 @@ VT102Emulator class >> protocol [
 ]
 
 { #category : #accessing }
-VT102Emulator class >> terminalTypeName [
+TerminalEmulatorVT102 class >> terminalTypeName [
 
 	^'vt102'
 ]
 
 { #category : #arguments }
-VT102Emulator >> addArgument: arg [
+TerminalEmulatorVT102 >> addArgument: arg [
 
 	arguments
 		at: arguments size
@@ -164,7 +164,7 @@ VT102Emulator >> addArgument: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> ansi52: arg [
+TerminalEmulatorVT102 >> ansi52: arg [
 	"enter ANSI mode"
 
 	self trace: '(VT52) ANSI'.
@@ -172,7 +172,7 @@ VT102Emulator >> ansi52: arg [
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> bel: arg [
+TerminalEmulatorVT102 >> bel: arg [
 	"ring keyboard bell"
 
 	self traceControl: 'BEL'.
@@ -180,7 +180,7 @@ VT102Emulator >> bel: arg [
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> bs: arg [
+TerminalEmulatorVT102 >> bs: arg [
 	"backspace"
 
 	self traceControl: 'BS'.
@@ -190,13 +190,13 @@ VT102Emulator >> bs: arg [
 ]
 
 { #category : #arguments }
-VT102Emulator >> clearArguments: arg [
+TerminalEmulatorVT102 >> clearArguments: arg [
 
 	arguments := OrderedCollection with: 0
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> cr: arg [
+TerminalEmulatorVT102 >> cr: arg [
 	"carriage return"
 
 	self traceControl: 'CR'.
@@ -204,13 +204,13 @@ VT102Emulator >> cr: arg [
 ]
 
 { #category : #private }
-VT102Emulator >> csi: arg [
+TerminalEmulatorVT102 >> csi: arg [
 
 	self debug: 'CSI' withAll: arguments withChar: arg
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> cub: arg [
+TerminalEmulatorVT102 >> cub: arg [
 	"CUrsor Back"
 
 	| n |
@@ -220,7 +220,7 @@ VT102Emulator >> cub: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> cud52: arg [
+TerminalEmulatorVT102 >> cud52: arg [
 	"VT52: CUrsor Down"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC B'].
@@ -229,7 +229,7 @@ VT102Emulator >> cud52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> cud: arg [
+TerminalEmulatorVT102 >> cud: arg [
 	"CUrsor Down"
 
 	| n |
@@ -239,7 +239,7 @@ VT102Emulator >> cud: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> cuf: arg [
+TerminalEmulatorVT102 >> cuf: arg [
  
 	| n |
 	n := arguments last max: 1.
@@ -248,7 +248,7 @@ VT102Emulator >> cuf: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> cul52: arg [
+TerminalEmulatorVT102 >> cul52: arg [
 	"VT52: CUrsor Left"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC D'].
@@ -257,7 +257,7 @@ VT102Emulator >> cul52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> cup: arg [
+TerminalEmulatorVT102 >> cup: arg [
 	"CUrsor Position"
 	"Note: this is identical to HVP"
 
@@ -273,7 +273,7 @@ VT102Emulator >> cup: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> cur52: arg [
+TerminalEmulatorVT102 >> cur52: arg [
 	"VT52: CUrsor Right"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC C'].
@@ -282,7 +282,7 @@ VT102Emulator >> cur52: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> cuu52: arg [
+TerminalEmulatorVT102 >> cuu52: arg [
 	"VT52: CUrsor Up"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC A'].
@@ -291,7 +291,7 @@ VT102Emulator >> cuu52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> cuu: arg [
+TerminalEmulatorVT102 >> cuu: arg [
 	"CUrsor Up"
 
 	| n |
@@ -301,7 +301,7 @@ VT102Emulator >> cuu: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> dca52: arg [
+TerminalEmulatorVT102 >> dca52: arg [
 	"VT52: Direct Cursor Adress"
 	"The manual probably says what to do with unhandled VT52 sequences
 	 when in ANSI mode but I'm too lazy to wade through it today.  Just barf
@@ -316,7 +316,7 @@ VT102Emulator >> dca52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> dch: arg [
+TerminalEmulatorVT102 >> dch: arg [
 	"Delete CHaracter"
 
 	| n |
@@ -326,13 +326,13 @@ VT102Emulator >> dch: arg [
 ]
 
 { #category : #private }
-VT102Emulator >> debug: message [
+TerminalEmulatorVT102 >> debug: message [
 
 	Transcript nextPutAll: '*** '; nextPutAll: message; cr; endEntry
 ]
 
 { #category : #private }
-VT102Emulator >> debug: message with: arg [
+TerminalEmulatorVT102 >> debug: message with: arg [
 
 	Transcript
 		nextPutAll: '*** ';
@@ -342,7 +342,7 @@ VT102Emulator >> debug: message with: arg [
 ]
 
 { #category : #private }
-VT102Emulator >> debug: message withAll: args withChar: char [
+TerminalEmulatorVT102 >> debug: message withAll: args withChar: char [
 
 	Transcript
 		nextPutAll: '*** ';
@@ -355,7 +355,7 @@ VT102Emulator >> debug: message withAll: args withChar: char [
 ]
 
 { #category : #private }
-VT102Emulator >> debug: message withChar: char [
+TerminalEmulatorVT102 >> debug: message withChar: char [
 
 	Transcript
 		nextPutAll: '*** ';
@@ -366,7 +366,7 @@ VT102Emulator >> debug: message withChar: char [
 ]
 
 { #category : #private }
-VT102Emulator >> debug: message withChar: a withChar: b [
+TerminalEmulatorVT102 >> debug: message withChar: a withChar: b [
 
 	Transcript
 		nextPutAll: '*** ';
@@ -378,13 +378,13 @@ VT102Emulator >> debug: message withChar: a withChar: b [
 ]
 
 { #category : #private }
-VT102Emulator >> dec: arg [
+TerminalEmulatorVT102 >> dec: arg [
 
 	self debug: 'CSI ?' withAll: arguments withChar: arg
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decid: arg [
+TerminalEmulatorVT102 >> decid: arg [
 	"DEC IDentify terminal (what are you?)"
 	"Note: the response is the same regardless of the operating mode: we send `ESC / Z'
 	 which identifies us as a VT102."
@@ -397,7 +397,7 @@ VT102Emulator >> decid: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decla: arg [
+TerminalEmulatorVT102 >> decla: arg [
 	"DEC Line Attributes"
 
 	arg == 16r33 ifTrue: [^self debug: 'DECDHL (hi)'].
@@ -409,7 +409,7 @@ VT102Emulator >> decla: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decpam: arg [
+TerminalEmulatorVT102 >> decpam: arg [
 	"DEC keyPad Application Mode"
 
 	self trace: 'DECPNM'.
@@ -417,7 +417,7 @@ VT102Emulator >> decpam: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decpnm: arg [
+TerminalEmulatorVT102 >> decpnm: arg [
 	"DEC keyPad Normal Mode"
 
 	self trace: 'DECPNM'.
@@ -425,7 +425,7 @@ VT102Emulator >> decpnm: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decrc: arg [
+TerminalEmulatorVT102 >> decrc: arg [
 	"DEC private Restore Cursor"
 
 	cursorState isNil ifFalse:
@@ -436,14 +436,14 @@ VT102Emulator >> decrc: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decrm: arg [
+TerminalEmulatorVT102 >> decrm: arg [
 	"DEC private Reset Mode"
 
 	arguments do: [:param | self decrmSingle: param]
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decrmSingle: param [
+TerminalEmulatorVT102 >> decrmSingle: param [
 	"DEC private Reset Mode"
 
 	param == 1	ifTrue: [self trace:		'DECCKM		(cursor key mode: cursor)'.  ^self setCursorKeysNormal].
@@ -463,7 +463,7 @@ VT102Emulator >> decrmSingle: param [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decsc: arg [
+TerminalEmulatorVT102 >> decsc: arg [
 	"DEC private Save Cursor"
 
 	(cursorState := Array new: 3)
@@ -473,14 +473,14 @@ VT102Emulator >> decsc: arg [
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decsm: arg [
+TerminalEmulatorVT102 >> decsm: arg [
 	"DEC private Set Mode"
 
 	arguments do: [:param | self decsmSingle: param]
 ]
 
 { #category : #'control sequences-DEC' }
-VT102Emulator >> decsmSingle: param [
+TerminalEmulatorVT102 >> decsmSingle: param [
 	"DEC private Set Mode"
 
 	param == 1	ifTrue: [self trace:		'DECCKM		(cursor key mode: application)'. ^self setCursorKeysApplication].
@@ -500,7 +500,7 @@ VT102Emulator >> decsmSingle: param [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> dl: arg [
+TerminalEmulatorVT102 >> dl: arg [
 	"Delete Lines"
 
 	| param |
@@ -510,7 +510,7 @@ VT102Emulator >> dl: arg [
 ]
 
 { #category : #protocol }
-VT102Emulator >> downcall: arg [
+TerminalEmulatorVT102 >> downcall: arg [
 	"Translate Squeak special keys into VT100 control sequences."
 
 	(keyMap includesKey: arg)
@@ -519,7 +519,7 @@ VT102Emulator >> downcall: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> ed52: arg [
+TerminalEmulatorVT102 >> ed52: arg [
 	"VT52: Erase to end of Display"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC J'].
@@ -528,7 +528,7 @@ VT102Emulator >> ed52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> ed: arg [
+TerminalEmulatorVT102 >> ed: arg [
 	"Erase in Display"
 
 	| param |
@@ -540,7 +540,7 @@ VT102Emulator >> ed: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> egm52: arg [
+TerminalEmulatorVT102 >> egm52: arg [
 	"VT52: Enter Graphics Mode"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC F'].
@@ -549,7 +549,7 @@ VT102Emulator >> egm52: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> el52: arg [
+TerminalEmulatorVT102 >> el52: arg [
 	"VT52: Erase to end of Line"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC K'].
@@ -558,7 +558,7 @@ VT102Emulator >> el52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> el: arg [
+TerminalEmulatorVT102 >> el: arg [
 	"Erase in Line"
 
 	| param |
@@ -570,13 +570,13 @@ VT102Emulator >> el: arg [
 ]
 
 { #category : #private }
-VT102Emulator >> esc: arg [
+TerminalEmulatorVT102 >> esc: arg [
 
 	self debug: 'ESC' withChar: arg
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> ht: arg [
+TerminalEmulatorVT102 >> ht: arg [
 	"horizontal tab"
 
 	self traceControl: 'HT'.
@@ -584,7 +584,7 @@ VT102Emulator >> ht: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> hts: arg [
+TerminalEmulatorVT102 >> hts: arg [
 	"VT52: cursor home
 	 ANSI: Horizontal Tab Set"
 
@@ -598,7 +598,7 @@ VT102Emulator >> hts: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> hvp: arg [
+TerminalEmulatorVT102 >> hvp: arg [
 	"Horizontal and Vertical Position"
 	"Note: this is identical to CUP"
 
@@ -614,7 +614,7 @@ VT102Emulator >> hvp: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> il: arg [
+TerminalEmulatorVT102 >> il: arg [
 	"Insert Lines"
 
 	| param |
@@ -624,7 +624,7 @@ VT102Emulator >> il: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> ind: arg [
+TerminalEmulatorVT102 >> ind: arg [
 	"INDex"
 
 	mode == #vt52 ifTrue: [^self cul52: arg].
@@ -633,7 +633,7 @@ VT102Emulator >> ind: arg [
 ]
 
 { #category : #'initialize-release' }
-VT102Emulator >> initialState: aState [
+TerminalEmulatorVT102 >> initialState: aState [
 
 	super initialState: aState.
 	arguments := nil.
@@ -648,18 +648,18 @@ VT102Emulator >> initialState: aState [
 ]
 
 { #category : #'initialize-release' }
-VT102Emulator >> initialize [
+TerminalEmulatorVT102 >> initialize [
 ]
 
 { #category : #protocol }
-VT102Emulator >> install [
+TerminalEmulatorVT102 >> install [
 
 	super install.
 	session propertyAt: #terminalType put: self terminalTypeString
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> lf: arg [
+TerminalEmulatorVT102 >> lf: arg [
 	"linefeed (also formfeed and vertical tab)"
 
 	self traceControl: 'LF'.
@@ -667,7 +667,7 @@ VT102Emulator >> lf: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> lgm52: arg [
+TerminalEmulatorVT102 >> lgm52: arg [
 	"VT52: Leave Graphics Mode"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC G'].
@@ -676,7 +676,7 @@ VT102Emulator >> lgm52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> nel: arg [
+TerminalEmulatorVT102 >> nel: arg [
 	"NExt Line"
 
 	self trace: 'NEL'.
@@ -684,25 +684,25 @@ VT102Emulator >> nel: arg [
 ]
 
 { #category : #arguments }
-VT102Emulator >> newArgument: arg [
+TerminalEmulatorVT102 >> newArgument: arg [
 
 	arguments addLast: 0
 ]
 
 { #category : #arguments }
-VT102Emulator >> oneArgument: arg [
+TerminalEmulatorVT102 >> oneArgument: arg [
 
 	arguments := arg
 ]
 
 { #category : #protocol }
-VT102Emulator >> passUp: arg [
+TerminalEmulatorVT102 >> passUp: arg [
 
 	super passUp: (charMap at: arg + 1 ifAbsent: [arg])
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> ri: arg [
+TerminalEmulatorVT102 >> ri: arg [
 	"Reverse Index"
 
 	self trace: 'RI'.
@@ -710,7 +710,7 @@ VT102Emulator >> ri: arg [
 ]
 
 { #category : #'control sequences-VT52' }
-VT102Emulator >> rlf52: arg [
+TerminalEmulatorVT102 >> rlf52: arg [
 	"VT52: Reverse Line Feed"
 
 	mode == #ansi ifTrue: [^self debug: 'ESC I'].
@@ -719,7 +719,7 @@ VT102Emulator >> rlf52: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> rm: arg [
+TerminalEmulatorVT102 >> rm: arg [
 	"Reset Mode"
 
 	| param |
@@ -730,7 +730,7 @@ VT102Emulator >> rm: arg [
 ]
 
 { #category : #protocol }
-VT102Emulator >> run [
+TerminalEmulatorVT102 >> run [
 
 	super run.
 	window := session
@@ -739,7 +739,7 @@ VT102Emulator >> run [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> scs0: arg [
+TerminalEmulatorVT102 >> scs0: arg [
 	"Select Character Set G0"
 
 	| char |
@@ -753,7 +753,7 @@ VT102Emulator >> scs0: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> scs1: arg [
+TerminalEmulatorVT102 >> scs1: arg [
 	"Select Character Set G1"
 
 	| char |
@@ -767,7 +767,7 @@ VT102Emulator >> scs1: arg [
 ]
 
 { #category : #private }
-VT102Emulator >> setCursorKeysApplication [
+TerminalEmulatorVT102 >> setCursorKeysApplication [
 
 	| esc |
 	esc := Character escape asString.
@@ -779,7 +779,7 @@ VT102Emulator >> setCursorKeysApplication [
 ]
 
 { #category : #private }
-VT102Emulator >> setCursorKeysNormal [
+TerminalEmulatorVT102 >> setCursorKeysNormal [
 
 	| esc |
 	esc := Character escape asString.
@@ -791,20 +791,20 @@ VT102Emulator >> setCursorKeysNormal [
 ]
 
 { #category : #private }
-VT102Emulator >> setMode: aSymbol [
+TerminalEmulatorVT102 >> setMode: aSymbol [
 
 	mode := aSymbol.
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> sgr: arg [
+TerminalEmulatorVT102 >> sgr: arg [
 	"Select Graphics Rendition"
 
 	arguments do: [:gr | self sgrSingle: gr]
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> sgrSingle: arg [
+TerminalEmulatorVT102 >> sgrSingle: arg [
 
 	self trace: 'SGR' with: arg.
 	arg == 0 ifTrue: [^window resetVideo].
@@ -817,14 +817,14 @@ VT102Emulator >> sgrSingle: arg [
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> si: arg [
+TerminalEmulatorVT102 >> si: arg [
 	"Shift In: select G0 charset"
 
 	charMap := g0Map
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> sm: arg [
+TerminalEmulatorVT102 >> sm: arg [
 	"Set Mode"
 
 	| param |
@@ -835,14 +835,14 @@ VT102Emulator >> sm: arg [
 ]
 
 { #category : #'control characters' }
-VT102Emulator >> so: arg [
+TerminalEmulatorVT102 >> so: arg [
 	"Shift In: select G1 charset"
 
 	charMap := g1Map
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> stbm: arg [
+TerminalEmulatorVT102 >> stbm: arg [
 	"Set Top and BottoM lines"
 
 	| top bottom |
@@ -857,7 +857,7 @@ VT102Emulator >> stbm: arg [
 ]
 
 { #category : #'control sequences' }
-VT102Emulator >> tbc: arg [
+TerminalEmulatorVT102 >> tbc: arg [
 	"TaB Clear"
 
 	| n |
@@ -869,38 +869,38 @@ VT102Emulator >> tbc: arg [
 ]
 
 { #category : #identification }
-VT102Emulator >> terminalTypeString [
+TerminalEmulatorVT102 >> terminalTypeString [
 	"Viz: RFCs 930 (Telnet Terminal Type Option) and 1700 (Assigned Numbers)"
 
 	^'VT102'
 ]
 
 { #category : #private }
-VT102Emulator >> trace: message [
+TerminalEmulatorVT102 >> trace: message [
 
 	trace ifTrue: [Transcript nextPutAll: message; cr; endEntry]
 ]
 
 { #category : #private }
-VT102Emulator >> trace: message with: a [
+TerminalEmulatorVT102 >> trace: message with: a [
 
 	trace ifTrue: [Transcript nextPutAll: message; space; print: a; cr; endEntry]
 ]
 
 { #category : #private }
-VT102Emulator >> trace: message with: a with: b [
+TerminalEmulatorVT102 >> trace: message with: a with: b [
 
 	trace ifTrue: [Transcript nextPutAll: message; space; print: a; space; print: b; cr; endEntry]
 ]
 
 { #category : #private }
-VT102Emulator >> traceControl: message [
+TerminalEmulatorVT102 >> traceControl: message [
 
 	trace ifTrue: [Transcript nextPutAll: message; cr; endEntry]
 ]
 
 { #category : #'initialize-release' }
-VT102Emulator >> window: aWindow [
+TerminalEmulatorVT102 >> window: aWindow [
 
 	window := aWindow.
 	window setAutoLinefeed: false

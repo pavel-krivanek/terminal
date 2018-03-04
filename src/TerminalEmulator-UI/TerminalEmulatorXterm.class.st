@@ -1,13 +1,13 @@
 "
 I emulate a xterm terminal.  The xterm is a modern member of the DEC VT200 family with additional ANSI functions including support for ISO 6429 colour escape sequences.  I am particularly useful for full-screen programs that know how to use colour highlighting (such as Emacs version 21 and higher).
 
-I inherit from VT102Emulator because I implement a proper superset of its capabilities.
+I inherit from TerminalEmulatorVT102 because I implement a proper superset of its capabilities.
 
-See the class comments in my superclasses (VT102Emulator in particular) for further information on how to use me.
+See the class comments in my superclasses (TerminalEmulatorVT102 in particular) for further information on how to use me.
 "
 Class {
-	#name : #XtermEmulator,
-	#superclass : #VT102Emulator,
+	#name : #TerminalEmulatorXterm,
+	#superclass : #TerminalEmulatorVT102,
 	#instVars : [
 		'savedBuffer'
 	],
@@ -15,23 +15,23 @@ Class {
 }
 
 { #category : #'class initialization' }
-XtermEmulator class >> initialize [
-	"XtermEmulator initialize"
+TerminalEmulatorXterm class >> initialize [
+	"TerminalEmulatorXterm initialize"
 
 	super initialize.
 	States := self protocol compile
 ]
 
 { #category : #'instance creation' }
-XtermEmulator class >> new [
-	"XtermEmulator new"
+TerminalEmulatorXterm class >> new [
+	"TerminalEmulatorXterm new"
 
 	^super new initialState: States
 ]
 
 { #category : #'class initialization' }
-XtermEmulator class >> protocol [
-	"XtermEmulator initialize"
+TerminalEmulatorXterm class >> protocol [
+	"TerminalEmulatorXterm initialize"
 	"XTerm is just a glorified VT102."
 
 	| desc |
@@ -61,13 +61,13 @@ XtermEmulator class >> protocol [
 ]
 
 { #category : #accessing }
-XtermEmulator class >> terminalTypeName [
+TerminalEmulatorXterm class >> terminalTypeName [
 
 	^'xterm'
 ]
 
 { #category : #arguments }
-XtermEmulator >> addStringArgument: arg [
+TerminalEmulatorXterm >> addStringArgument: arg [
 
 	arguments
 		at: arguments size
@@ -75,7 +75,7 @@ XtermEmulator >> addStringArgument: arg [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> cha: arg [
+TerminalEmulatorXterm >> cha: arg [
 	"Character Position Absolute"
 
 	self trace: 'CHA ' , (arguments first max: 1) printString.
@@ -83,7 +83,7 @@ XtermEmulator >> cha: arg [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> dch: arg [
+TerminalEmulatorXterm >> dch: arg [
 	"Delete Character(s)"
 
 	| n |
@@ -93,7 +93,7 @@ XtermEmulator >> dch: arg [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> decrmSingle: param [
+TerminalEmulatorXterm >> decrmSingle: param [
 
 	self trace: 'DECSM' with: param.
 	param == 1047 ifTrue: [^self restoreBuffer].
@@ -103,7 +103,7 @@ XtermEmulator >> decrmSingle: param [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> decsmSingle: param [
+TerminalEmulatorXterm >> decsmSingle: param [
 
 	self trace: 'DECSM' with: param.
 	param == 1047 ifTrue: [^self saveBuffer].
@@ -113,7 +113,7 @@ XtermEmulator >> decsmSingle: param [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> ich: arg [
+TerminalEmulatorXterm >> ich: arg [
 	"Insert Character(s)"
 
 	| n |
@@ -124,7 +124,7 @@ XtermEmulator >> ich: arg [
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> il: arg [
+TerminalEmulatorXterm >> il: arg [
 	"Insert Line(s)"
 
 	| n |
@@ -134,14 +134,14 @@ XtermEmulator >> il: arg [
 ]
 
 { #category : #'initialize-release' }
-XtermEmulator >> initialize [
+TerminalEmulatorXterm >> initialize [
 
 	super initialize.
 	savedBuffer := nil
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> lpa: arg [
+TerminalEmulatorXterm >> lpa: arg [
 	"Line Position Absolute"
 
 	| y x |
@@ -153,20 +153,20 @@ XtermEmulator >> lpa: arg [
 ]
 
 { #category : #arguments }
-XtermEmulator >> newStringArgument: arg [
+TerminalEmulatorXterm >> newStringArgument: arg [
 
 	arguments addLast: ''
 ]
 
 { #category : #protocol }
-XtermEmulator >> note: aSymbol with: anObject [
+TerminalEmulatorXterm >> note: aSymbol with: anObject [
 
 	super note: aSymbol with: anObject.
 	aSymbol == #endpointClosed ifTrue: [^self restoreBuffer].
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> osc: arg [
+TerminalEmulatorXterm >> osc: arg [
 	"Operating System Command"
 
 	| type |
@@ -177,7 +177,7 @@ XtermEmulator >> osc: arg [
 ]
 
 { #category : #private }
-XtermEmulator >> restoreBuffer [
+TerminalEmulatorXterm >> restoreBuffer [
 	"Restore the tty to its previously saved state."
 
 	savedBuffer isNil ifFalse: [window bufferState: savedBuffer].
@@ -185,14 +185,14 @@ XtermEmulator >> restoreBuffer [
 ]
 
 { #category : #private }
-XtermEmulator >> restoreState [
+TerminalEmulatorXterm >> restoreState [
 	"Pretend we saw Restore Cursor"
 
 	^self decrc: nil
 ]
 
 { #category : #private }
-XtermEmulator >> saveBuffer [
+TerminalEmulatorXterm >> saveBuffer [
 	"Save a copy of the current state of the tty."
 
 	savedBuffer := window bufferState.
@@ -200,14 +200,14 @@ XtermEmulator >> saveBuffer [
 ]
 
 { #category : #private }
-XtermEmulator >> saveState [
+TerminalEmulatorXterm >> saveState [
 	"Pretend we saw Save Cursor"
 
 	^self decsc: nil
 ]
 
 { #category : #'control sequences' }
-XtermEmulator >> sgrSingle: arg [
+TerminalEmulatorXterm >> sgrSingle: arg [
 
 	self trace: 'SGR' with: arg.
 	"ANSI colour codes"
@@ -222,7 +222,7 @@ XtermEmulator >> sgrSingle: arg [
 ]
 
 { #category : #identification }
-XtermEmulator >> terminalTypeString [
+TerminalEmulatorXterm >> terminalTypeString [
 	"Viz: RFCs 930 (Telnet Terminal Type Option) and 1700 (Assigned Numbers)"
 
 	^'XTERM'

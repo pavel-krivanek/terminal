@@ -5,7 +5,7 @@ You create me by sending my class
 
 	command: programNameString arguments: arrayOfArgumentStrings
 
-Note also that I am really intended to be used by a ProcessEndpoint as part of a ProtocolStack (along with a terminal emulator and a TeletypeMorph to provide interaction with the subprocess).
+Note also that I am really intended to be used by a ProcessEndpoint as part of a ProtocolStack (along with a terminal emulator and a TerminalEmulatorMorph to provide interaction with the subprocess).
 
 "
 Class {

@@ -5,11 +5,11 @@ I implement sufficient cursor addressing and character attributes to provide ter
 
 I am designed to be the head of a protocol stack.  For this reason I expect my source to send me #upcall: aCharacter (I am the high protocol for some emulator) and I pass keyboard events down to my sink by sending it #downcall: aCharacter (the sink is my low protocol).  Anybody can send me #delete which I will propagate to all members of my protocol stack as a #windowClosed note.  (This will normally cause any connected endpoints at the tail end of the stack to be disconnected and destroyed.)
 
-	TeletypeMorph new openInWorld
+	TerminalEmulatorMorph new openInWorld
 
 "
 Class {
-	#name : #TeletypeMorph,
+	#name : #TerminalEmulatorMorph,
 	#superclass : #Morph,
 	#instVars : [
 		'inset',
@@ -84,30 +84,30 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> example [
-	"TeletypeMorph example"
+TerminalEmulatorMorph class >> example [
+	"TerminalEmulatorMorph example"
 
 	| echo tty |
 	"Pushing tty onto localEcho will convert ASCII control chars into tty cursor commands."
 	(echo := ProtocolAdaptor new) localEcho asProtocolStack push: (tty := self new openInHand); install; run.
-	echo downcallAll: TeletypeMorph organization classComment string asByteArray.
+	echo downcallAll: TerminalEmulatorMorph organization classComment string asByteArray.
 	tty activePosition: 1@24; flush.
 	^tty
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> example2 [
-	"TeletypeMorph example2"
+TerminalEmulatorMorph class >> example2 [
+	"TerminalEmulatorMorph example2"
 
 	| top tty |
-	top := ScrollPane new scroller: (tty := TeletypeMorph new).
+	top := ScrollPane new scroller: (tty := TerminalEmulatorMorph new).
 	ProtocolAdaptor new localEcho asProtocolStack push: tty; install; run.
 	top openInHand
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> initialize [
-	"TeletypeMorph initialize"
+TerminalEmulatorMorph class >> initialize [
+	"TerminalEmulatorMorph initialize"
 
 	self initializeCursor.
 	self initializeCharacterClasses.
@@ -123,8 +123,8 @@ TeletypeMorph class >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> initializeCharacterClasses [
-	"TeletypeMorph initializeCharacterClasses asByteArray inspect"
+TerminalEmulatorMorph class >> initializeCharacterClasses [
+	"TerminalEmulatorMorph initializeCharacterClasses asByteArray inspect"
 	"Clicking the red button twice in rapid succession will cause all adjacent characters of the same class (e.g., letters, white space, punctuation) under the pointer to be selected.  Since different people have different preferences for what should be selected (for example, whether filenames should be selected as a whole or as individual path components) the default mapping can be overridden through the use of the CharClass variable.  The default collects whitespace, alphanumeric and special graphics characters into three classes.  Each punctuation character is in a class of its own.
 	NOTE: in order to see the contents of some of the strings in this method you might have to select their contents and then use the window menu to change their font to Fixed."
 
@@ -169,8 +169,8 @@ TeletypeMorph class >> initializeCharacterClasses [
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> initializeCursor [
-	"TeletypeMorph initializeCursor"
+TerminalEmulatorMorph class >> initializeCursor [
+	"TerminalEmulatorMorph initializeCursor"
 	"TextCursor showWhile: [Sensor waitButton]"
 
 	TextCursor :=   CursorWithMask derivedFrom:
@@ -197,7 +197,7 @@ TeletypeMorph class >> initializeCursor [
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> new [
+TerminalEmulatorMorph class >> new [
 
 	| tty |
 	tty := super new initialize: 80@24.
@@ -205,8 +205,8 @@ TeletypeMorph class >> new [
 ]
 
 { #category : #'as yet unclassified' }
-TeletypeMorph class >> showCharacterClasses [
-	"TeletypeMorph showCharacterClasses"
+TerminalEmulatorMorph class >> showCharacterClasses [
+	"TerminalEmulatorMorph showCharacterClasses"
 
 	| s range start stop |
 	s := IdentityDictionary new.
@@ -229,26 +229,26 @@ TeletypeMorph class >> showCharacterClasses [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> activeColumn [
+TerminalEmulatorMorph >> activeColumn [
 
 	^x
 ]
 
 { #category : #accessing }
-TeletypeMorph >> activeColumn: c [
+TerminalEmulatorMorph >> activeColumn: c [
 
 	x := c min: cols.
 	self showCursor.
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> activePosition [
+TerminalEmulatorMorph >> activePosition [
 
 	^x@y
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> activePosition: aPoint [
+TerminalEmulatorMorph >> activePosition: aPoint [
 
 	self hideCursor.
 	x := aPoint x min: cols max: 1.
@@ -258,7 +258,7 @@ TeletypeMorph >> activePosition: aPoint [
 ]
 
 { #category : #private }
-TeletypeMorph >> autoFlush [
+TerminalEmulatorMorph >> autoFlush [
 
 	(autoFlush := autoFlush - 1) < 1
 		ifTrue:
@@ -268,25 +268,25 @@ TeletypeMorph >> autoFlush [
 ]
 
 { #category : #private }
-TeletypeMorph >> autoFlushCount [
+TerminalEmulatorMorph >> autoFlushCount [
 
 	^smoothScroll ifTrue: [2] ifFalse: [rows]
 ]
 
 { #category : #private }
-TeletypeMorph >> banner [
+TerminalEmulatorMorph >> banner [
 
 	^''
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> bs [
+TerminalEmulatorMorph >> bs [
 
 	self cursorLeft: 1 wrapping: false
 ]
 
 { #category : #accessing }
-TeletypeMorph >> bufferState [
+TerminalEmulatorMorph >> bufferState [
 	"Answer an opaque representation of the current state of the buffer contents."
 
 	| theLines state |
@@ -299,7 +299,7 @@ TeletypeMorph >> bufferState [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> bufferState: state [
+TerminalEmulatorMorph >> bufferState: state [
 	"Restore the buffer contents to a previously saved state."
 
 	| theLines nRows |
@@ -311,8 +311,8 @@ TeletypeMorph >> bufferState: state [
 	"Ensure we have sufficient lines in the display."
 	[lines size < theLines size]
 		whileTrue:
-			[lines addLast: (SimpleTextState new: cols).
-			 self addMorphBack: (SimpleTextMorph contents: lines last)].
+			[lines addLast: (TerminalEmulatorTextState new: cols).
+			 self addMorphBack: (TerminalEmulatorLineMorph contents: lines last)].
 	nRows := rows min: theLines size.
 	1 to: nRows do: [ :i |
 		(submorphs at: i)
@@ -328,7 +328,7 @@ TeletypeMorph >> bufferState: state [
 ]
 
 { #category : #menus }
-TeletypeMorph >> buildMainMenu [
+TerminalEmulatorMorph >> buildMainMenu [
 
 	| m |
 	(m := MenuMorph new) defaultTarget: self.
@@ -360,7 +360,7 @@ TeletypeMorph >> buildMainMenu [
 ]
 
 { #category : #menus }
-TeletypeMorph >> buildVTMenu [
+TerminalEmulatorMorph >> buildVTMenu [
 
 	| m |
 	(m := MenuMorph new) defaultTarget: self.
@@ -403,19 +403,19 @@ TeletypeMorph >> buildVTMenu [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> characterClass [
+TerminalEmulatorMorph >> characterClass [
 
 	^CharClass
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> clearCursor [
+TerminalEmulatorMorph >> clearCursor [
 
 	lines do: [ :line | line cursorCol: 0]
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearLine [
+TerminalEmulatorMorph >> clearLine [
 
 	self
 		hideCursor;
@@ -424,7 +424,7 @@ TeletypeMorph >> clearLine [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearLine: n from: l to: r [
+TerminalEmulatorMorph >> clearLine: n from: l to: r [
 
 	(self lineAt: n)
 		from: l to: r put: $  fg: fg bg: bg em: 0;
@@ -432,7 +432,7 @@ TeletypeMorph >> clearLine: n from: l to: r [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearLineLeft [
+TerminalEmulatorMorph >> clearLineLeft [
 
 	self
 		clearSelection;
@@ -442,7 +442,7 @@ TeletypeMorph >> clearLineLeft [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearLineRight [
+TerminalEmulatorMorph >> clearLineRight [
 
 	self
 		clearSelection;
@@ -452,7 +452,7 @@ TeletypeMorph >> clearLineRight [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearScreen [
+TerminalEmulatorMorph >> clearScreen [
 
 	self hideCursor.
 	1 to: rows do: [:i | self clearLine: i from: 1 to: cols].
@@ -460,7 +460,7 @@ TeletypeMorph >> clearScreen [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearScreenLeft [
+TerminalEmulatorMorph >> clearScreenLeft [
 
 	self
 		clearSelection;
@@ -472,7 +472,7 @@ TeletypeMorph >> clearScreenLeft [
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> clearScreenRight [
+TerminalEmulatorMorph >> clearScreenRight [
 
 	self
 		clearSelection;
@@ -484,7 +484,7 @@ TeletypeMorph >> clearScreenRight [
 ]
 
 { #category : #selection }
-TeletypeMorph >> clearSelection [
+TerminalEmulatorMorph >> clearSelection [
 	"Remove the visual representation of the selection region.  Saved selection text is unaffacted."
 
 	selectionActive ifFalse: [^self].
@@ -494,7 +494,7 @@ TeletypeMorph >> clearSelection [
 ]
 
 { #category : #tabs }
-TeletypeMorph >> clearTab [
+TerminalEmulatorMorph >> clearTab [
 
 	x <= cols ifTrue: [tabs at: x put: false].
 "
@@ -506,26 +506,26 @@ TeletypeMorph >> clearTab [
 ]
 
 { #category : #tabs }
-TeletypeMorph >> clearTabs [
+TerminalEmulatorMorph >> clearTabs [
 
 	tabs atAllPut: false.
 ]
 
 { #category : #accessing }
-TeletypeMorph >> columns [
+TerminalEmulatorMorph >> columns [
 
 	^cols
 ]
 
 { #category : #selection }
-TeletypeMorph >> copySelection [
+TerminalEmulatorMorph >> copySelection [
 	"Copy the currently selected text to the clipboard."
 
 	Clipboard clipboardText: selection
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> cr [
+TerminalEmulatorMorph >> cr [
 
 	self hideCursor.
 	x := 1.
@@ -533,13 +533,13 @@ TeletypeMorph >> cr [
 ]
 
 { #category : #private }
-TeletypeMorph >> currentLine [
+TerminalEmulatorMorph >> currentLine [
 
 	^lines at: lines size - rows + y
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> cursorDown: n scrolling: scrollFlag [
+TerminalEmulatorMorph >> cursorDown: n scrolling: scrollFlag [
 
 	self hideCursor.
 	n timesRepeat: [self cursorDownScrolling: scrollFlag].
@@ -547,14 +547,14 @@ TeletypeMorph >> cursorDown: n scrolling: scrollFlag [
 ]
 
 { #category : #private }
-TeletypeMorph >> cursorDownScrolling: scrollFlag [
+TerminalEmulatorMorph >> cursorDownScrolling: scrollFlag [
 
 	(y >= bottomLine and: [scrollFlag]) ifTrue: [self scrollForward].
 	y := y + 1 min: bottomLine
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> cursorLeft: n wrapping: wrapFlag [
+TerminalEmulatorMorph >> cursorLeft: n wrapping: wrapFlag [
 
 	self hideCursor.
 	n timesRepeat: [self cursorLeftWrapping: wrapFlag].
@@ -562,14 +562,14 @@ TeletypeMorph >> cursorLeft: n wrapping: wrapFlag [
 ]
 
 { #category : #private }
-TeletypeMorph >> cursorLeftWrapping: wrapFlag [
+TerminalEmulatorMorph >> cursorLeftWrapping: wrapFlag [
 
 	x > 1 ifTrue: [^x := x - 1].
 	(y > 1 and: [wrapFlag and: [reverseWrap]]) ifTrue: [x := cols.  y := y - 1]
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> cursorRight: n wrapping: wrapFlag [
+TerminalEmulatorMorph >> cursorRight: n wrapping: wrapFlag [
 
 	self hideCursor.
 	n timesRepeat: [self cursorRightWrapping: wrapFlag].
@@ -577,13 +577,13 @@ TeletypeMorph >> cursorRight: n wrapping: wrapFlag [
 ]
 
 { #category : #private }
-TeletypeMorph >> cursorRightWrapping: wrapFlag [
+TerminalEmulatorMorph >> cursorRightWrapping: wrapFlag [
 
 	((x := x + 1) > cols and: [wrapFlag not]) ifTrue: [x := cols].
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> cursorUp: n scrolling: scrollFlag [
+TerminalEmulatorMorph >> cursorUp: n scrolling: scrollFlag [
 
 	self hideCursor.
 	n timesRepeat: [self cursorUpScrolling: scrollFlag].
@@ -591,32 +591,32 @@ TeletypeMorph >> cursorUp: n scrolling: scrollFlag [
 ]
 
 { #category : #private }
-TeletypeMorph >> cursorUpScrolling: scrollFlag [
+TerminalEmulatorMorph >> cursorUpScrolling: scrollFlag [
 
 	(y <= topLine and: [scrollFlag]) ifTrue: [self scrollBackward].
 	y := y - 1 max: topLine
 ]
 
 { #category : #private }
-TeletypeMorph >> debug: message [
+TerminalEmulatorMorph >> debug: message [
 
 	Transcript nextPutAll: message; cr; endEntry
 ]
 
 { #category : #private }
-TeletypeMorph >> debug: message with: arg [
+TerminalEmulatorMorph >> debug: message with: arg [
 
 	Transcript nextPutAll: message; space; print: arg; cr; endEntry
 ]
 
 { #category : #private }
-TeletypeMorph >> deleteForward [
+TerminalEmulatorMorph >> deleteForward [
 
 	(self protectSelection; currentLine) deleteCharAt: x
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> deleteForward: n [
+TerminalEmulatorMorph >> deleteForward: n [
 
 	self hideCursor.
 	n timesRepeat: [self deleteForward].
@@ -624,25 +624,25 @@ TeletypeMorph >> deleteForward: n [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> deleteIsDel [
+TerminalEmulatorMorph >> deleteIsDel [
 
 	^deleteIsDel
 ]
 
 { #category : #accessing }
-TeletypeMorph >> deleteIsDel: aBoolean [
+TerminalEmulatorMorph >> deleteIsDel: aBoolean [
 
 	deleteIsDel := aBoolean
 ]
 
 { #category : #private }
-TeletypeMorph >> deleteLine [
+TerminalEmulatorMorph >> deleteLine [
 
 	^self scrollForwardFrom: y to: bottomLine
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> deleteLines: n [
+TerminalEmulatorMorph >> deleteLines: n [
 
 	self hideCursor.
 	n timesRepeat: [self deleteLine].
@@ -651,27 +651,27 @@ TeletypeMorph >> deleteLines: n [
 ]
 
 { #category : #private }
-TeletypeMorph >> displayLineAt: index [
+TerminalEmulatorMorph >> displayLineAt: index [
 	"Answer the displayed (visible) line at index."
 
 	^lines at: displayStart + index
 ]
 
 { #category : #private }
-TeletypeMorph >> displayLineAt: index put: anObject [
+TerminalEmulatorMorph >> displayLineAt: index put: anObject [
 	"Change the displayed (visible) line at index."
 
 	^lines at: displayStart + index put: anObject
 ]
 
 { #category : #private }
-TeletypeMorph >> displayLinesDo: aBlock [
+TerminalEmulatorMorph >> displayLinesDo: aBlock [
 
 	lines from: displayStart + 1 to: displayStart + rows do: aBlock
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> doFullReset [
+TerminalEmulatorMorph >> doFullReset [
 	"Clear the screen, reset tabs to every eight columns, and reset the terminal modes (such as wrap and smooth scroll) to their initial states just after terminal initialisation."
 
 	self
@@ -685,7 +685,7 @@ TeletypeMorph >> doFullReset [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> doResetAndClear [
+TerminalEmulatorMorph >> doResetAndClear [
 	"Reset the terminal to a sane state and clear the saved lines."
 
 	self doFullReset.
@@ -696,7 +696,7 @@ TeletypeMorph >> doResetAndClear [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> doSoftReset [
+TerminalEmulatorMorph >> doSoftReset [
 	"Reset scroll regions.  This can be convenient when some program has left the scroll regions set incorrectly (often a problem when using VMS or TOPS-20)."
 
 	topLine := 1.
@@ -704,20 +704,20 @@ TeletypeMorph >> doSoftReset [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> down: protoLo [
+TerminalEmulatorMorph >> down: protoLo [
 
 	down := protoLo
 ]
 
 { #category : #private }
-TeletypeMorph >> drawOn: aCanvas [
+TerminalEmulatorMorph >> drawOn: aCanvas [
 
 	super drawOn: aCanvas.
 	self updateScrollbar.
 ]
 
 { #category : #private }
-TeletypeMorph >> emacsColoursHelpString [
+TerminalEmulatorMorph >> emacsColoursHelpString [
 	"This is so long that it distracts from the menu building in progress."
 
 	^'Use Emacs-style colours in the alternate screen buffer.
@@ -726,7 +726,7 @@ TeletypeMorph >> emacsColoursHelpString [
 ]
 
 { #category : #selection }
-TeletypeMorph >> endSelection: screenPosition [
+TerminalEmulatorMorph >> endSelection: screenPosition [
 	"Mouse selection has just finished.  Stop tracking and, iff the mouse moved since selection start, compute and remember the new selection text."
 
 	self stopSteppingSelector: #trackSelection.
@@ -737,14 +737,14 @@ TeletypeMorph >> endSelection: screenPosition [
 ]
 
 { #category : #selection }
-TeletypeMorph >> extendSelection: screenPosition [
+TerminalEmulatorMorph >> extendSelection: screenPosition [
 	"Extend the current selection through screenPosition."
 
 	selectionStart isNil ifFalse: [self trackSelection: screenPosition]
 ]
 
 { #category : #geometry }
-TeletypeMorph >> extent: newExtent [
+TerminalEmulatorMorph >> extent: newExtent [
 	"We're being allocated real estate from above (initial placement or manual resize).  Adjust the screen size accordingly."
 
 	| layoutBounds textBounds nCols nRows org ext lineSkip |
@@ -764,7 +764,7 @@ TeletypeMorph >> extent: newExtent [
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> fillScreen: char [
+TerminalEmulatorMorph >> fillScreen: char [
 
 	self
 		clearSelection;
@@ -772,7 +772,7 @@ TeletypeMorph >> fillScreen: char [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> flush [
+TerminalEmulatorMorph >> flush [
 
 	submorphs from: 1 to: rows do: [ :m | m flush].
 	autoFlush := self autoFlushCount.
@@ -780,7 +780,7 @@ TeletypeMorph >> flush [
 ]
 
 { #category : #selection }
-TeletypeMorph >> getSelectionRegion [
+TerminalEmulatorMorph >> getSelectionRegion [
 	"Answer a Rectangle representing the current selection area in character coordinates.  Note that the origin may be to the right of the corner."
 
 	| start end tmp |
@@ -793,14 +793,14 @@ TeletypeMorph >> getSelectionRegion [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> graphicsState [
+TerminalEmulatorMorph >> graphicsState [
 	"Answer an opaque representation of the current character attributes."
 
 	^Array with: fg with: bg with: em with: rv
 ]
 
 { #category : #accessing }
-TeletypeMorph >> graphicsState: gs [
+TerminalEmulatorMorph >> graphicsState: gs [
 	"Restore the current character attributes.  (See #graphicsState.)"
 
 	fg := gs at: 1.
@@ -809,45 +809,45 @@ TeletypeMorph >> graphicsState: gs [
 ]
 
 { #category : #events }
-TeletypeMorph >> handlesKeyboard: evt [
+TerminalEmulatorMorph >> handlesKeyboard: evt [
 	"Answer whether we're interested in keyboard events."
 
 	^true "hasFocus or: [super handlesKeyboard: evt]"
 ]
 
 { #category : #events }
-TeletypeMorph >> handlesMouseDown: evt [
+TerminalEmulatorMorph >> handlesMouseDown: evt [
 	"Answer whether we're interested in mouse events."
 
 	^true "self isConnected and: [hasFocus or: [super handlesMouseDown: evt]]"
 ]
 
 { #category : #events }
-TeletypeMorph >> handlesMouseOver: evt [
+TerminalEmulatorMorph >> handlesMouseOver: evt [
 
 	^true "hasFocus or: [super handlesMouseOver: evt]"
 ]
 
 { #category : #accessing }
-TeletypeMorph >> hasFocus [
+TerminalEmulatorMorph >> hasFocus [
 
 	^hasFocus
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> hideCursor [
+TerminalEmulatorMorph >> hideCursor [
 
 	self currentLine cursorCol: 0
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> hideOrShowScrollBar [
+TerminalEmulatorMorph >> hideOrShowScrollBar [
 
 	"ScrollBar sends us this for no good reason."
 ]
 
 { #category : #geometry }
-TeletypeMorph >> hideScrollbar [
+TerminalEmulatorMorph >> hideScrollbar [
 	"Remove the scrollbar from the window."
 
 	scroll notNil
@@ -857,7 +857,7 @@ TeletypeMorph >> hideScrollbar [
 ]
 
 { #category : #selection }
-TeletypeMorph >> highlightSelection [
+TerminalEmulatorMorph >> highlightSelection [
 	"The selection region has changed.  Update the visual representation."
 
 	| region |
@@ -875,7 +875,7 @@ TeletypeMorph >> highlightSelection [
 ]
 
 { #category : #geometry }
-TeletypeMorph >> initScrollbar: frame [
+TerminalEmulatorMorph >> initScrollbar: frame [
 	"Initialize the scrollbar to fit in/around the given frame."
 
 	| width extent origin |
@@ -895,7 +895,7 @@ TeletypeMorph >> initScrollbar: frame [
 ]
 
 { #category : #geometry }
-TeletypeMorph >> initTextBounds: textBounds width: nCols height: nRows [
+TerminalEmulatorMorph >> initTextBounds: textBounds width: nCols height: nRows [
 	"This is a geometry change imposed from outside (either initial placement or manual resizing).  We honour it without attempting to fix the geometry of our owner."
 
 	| r morphs morph |
@@ -913,11 +913,11 @@ TeletypeMorph >> initTextBounds: textBounds width: nCols height: nRows [
 					["suck last saved line back down into the screen"
 					 displayStart := displayStart - 1.
 					 savedLines := savedLines - 1.
-					 morphs addFirst: (SimpleTextMorph contents: (self displayLineAt: 1)).
+					 morphs addFirst: (TerminalEmulatorLineMorph contents: (self displayLineAt: 1)).
 					 y := y + 1]
 				ifFalse:
 					["add a new empty line at the bottom of the screen"
-					 morph := SimpleTextMorph contents: (lines addLast: (SimpleTextState new: cols)).
+					 morph := TerminalEmulatorLineMorph contents: (lines addLast: (TerminalEmulatorTextState new: cols)).
 					 morphs addLast: morph].
 			 rows := rows + 1].
 	[rows > r]
@@ -939,20 +939,20 @@ TeletypeMorph >> initTextBounds: textBounds width: nCols height: nRows [
 ]
 
 { #category : #geometry }
-TeletypeMorph >> initialExtent [
+TerminalEmulatorMorph >> initialExtent [
 
 	self flag: #ikp. "can this can go away?"
 	^self preferredExtent
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initialize [
+TerminalEmulatorMorph >> initialize [
 
 	^self initialize: 80@24
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initialize: size [
+TerminalEmulatorMorph >> initialize: size [
 
 	super initialize.
 	self borderWidth: 2.
@@ -968,11 +968,11 @@ TeletypeMorph >> initialize: size [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeContent [
+TerminalEmulatorMorph >> initializeContent [
 
 	| morphs |
 	morphs := OrderedCollection new.
-	rows timesRepeat: [morphs addLast: ((SimpleTextMorph contents: (lines addLast: self newLine)) cursorColour: cursorColour)].
+	rows timesRepeat: [morphs addLast: ((TerminalEmulatorLineMorph contents: (lines addLast: self newLine)) cursorColour: cursorColour)].
 	self addAllMorphs: morphs.
 	topLine := 1.
 	bottomLine := rows.
@@ -981,7 +981,7 @@ TeletypeMorph >> initializeContent [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeScrollbar [
+TerminalEmulatorMorph >> initializeScrollbar [
 
 	scrollFlop := true.
 	scrollRight := true.
@@ -989,14 +989,14 @@ TeletypeMorph >> initializeScrollbar [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeTabs [
+TerminalEmulatorMorph >> initializeTabs [
 
 	tabs := Array new: cols withAll: false.
 	1 to: cols by: 8 do: [:i | tabs at: i put: true]
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeTeletype: size [
+TerminalEmulatorMorph >> initializeTeletype: size [
 	"Initialize the default behaviour: dumb terminal with local echo and default xterm VT options."
 
 	font := LogicalFont familyName: 'Source Code Pro' pointSize: 9.
@@ -1039,7 +1039,7 @@ TeletypeMorph >> initializeTeletype: size [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> initializeTerminalModes [
+TerminalEmulatorMorph >> initializeTerminalModes [
 	"Initialize the default behaviour: dumb terminal with local echo and standard xterm VT option settings."
 
 	autoWrap := true.
@@ -1053,14 +1053,14 @@ TeletypeMorph >> initializeTerminalModes [
 ]
 
 { #category : #private }
-TeletypeMorph >> insert [
+TerminalEmulatorMorph >> insert [
 
 	(self protectSelection; currentLine)
 		at: x insert: $  fg: fg bg: bg em: em
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> insert: n [
+TerminalEmulatorMorph >> insert: n [
 
 	self hideCursor.
 	n timesRepeat: [self insert].
@@ -1068,13 +1068,13 @@ TeletypeMorph >> insert: n [
 ]
 
 { #category : #private }
-TeletypeMorph >> insertLine [
+TerminalEmulatorMorph >> insertLine [
 
 	^self scrollBackwardFrom: y to: bottomLine
 ]
 
 { #category : #'editor functions' }
-TeletypeMorph >> insertLines: n [
+TerminalEmulatorMorph >> insertLines: n [
 
 	self hideCursor.
 	n timesRepeat: [self insertLine].
@@ -1083,25 +1083,25 @@ TeletypeMorph >> insertLines: n [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> install [
+TerminalEmulatorMorph >> install [
 
 	session isNil ifFalse: [session propertyAt: #window put: self]
 ]
 
 { #category : #testing }
-TeletypeMorph >> isCollapsed [
+TerminalEmulatorMorph >> isCollapsed [
 
 	^(systemWindow notNil) and: [systemWindow isCollapsed]
 ]
 
 { #category : #protocol }
-TeletypeMorph >> isConnected [
+TerminalEmulatorMorph >> isConnected [
 
 	^session notNil and: [session isConnected]
 ]
 
 { #category : #events }
-TeletypeMorph >> keyStroke: evt [
+TerminalEmulatorMorph >> keyStroke: evt [
 	"Receive a character from the keyboard."
 
 	| char |
@@ -1127,13 +1127,13 @@ TeletypeMorph >> keyStroke: evt [
 ]
 
 { #category : #events }
-TeletypeMorph >> keyboardFocusChange: aBoolean [
+TerminalEmulatorMorph >> keyboardFocusChange: aBoolean [
 
 	hasFocus := aBoolean
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> lf [
+TerminalEmulatorMorph >> lf [
 
 	autoCR
 		ifTrue: [self newline]
@@ -1141,13 +1141,13 @@ TeletypeMorph >> lf [
 ]
 
 { #category : #private }
-TeletypeMorph >> lineAt: index [
+TerminalEmulatorMorph >> lineAt: index [
 
 	^lines at: savedLines + index
 ]
 
 { #category : #private }
-TeletypeMorph >> linesChanged [
+TerminalEmulatorMorph >> linesChanged [
 
 	| lineNo line |
 	lineNo := displayStart.
@@ -1160,13 +1160,13 @@ TeletypeMorph >> linesChanged [
 ]
 
 { #category : #private }
-TeletypeMorph >> linesDo: aBlock [
+TerminalEmulatorMorph >> linesDo: aBlock [
 
 	self linesFrom: 1 to: rows do: aBlock
 ]
 
 { #category : #private }
-TeletypeMorph >> linesFrom: start to: stop do: aBlock [
+TerminalEmulatorMorph >> linesFrom: start to: stop do: aBlock [
 
 	| first |
 	first := lines size - rows.
@@ -1174,7 +1174,7 @@ TeletypeMorph >> linesFrom: start to: stop do: aBlock [
 ]
 
 { #category : #private }
-TeletypeMorph >> loadPreferences: dict [
+TerminalEmulatorMorph >> loadPreferences: dict [
 
 	| r c s |
 	(dict at: #saveTerminalMainOptions)
@@ -1209,7 +1209,7 @@ TeletypeMorph >> loadPreferences: dict [
 ]
 
 { #category : #events }
-TeletypeMorph >> lock [
+TerminalEmulatorMorph >> lock [
 	"We're losing keyboard focus."
 
 	super lock.
@@ -1218,7 +1218,7 @@ TeletypeMorph >> lock [
 ]
 
 { #category : #menus }
-TeletypeMorph >> menu: aMenu add: aString var: aBoolean eval: aBlock help: helpString [
+TerminalEmulatorMorph >> menu: aMenu add: aString var: aBoolean eval: aBlock help: helpString [
 
 	aMenu
 		add: (aBoolean ifTrue: ['<yes>'] ifFalse: ['<no>']), aString
@@ -1228,14 +1228,14 @@ TeletypeMorph >> menu: aMenu add: aString var: aBoolean eval: aBlock help: helpS
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuBlock: aBlock [
+TerminalEmulatorMorph >> menuBlock: aBlock [
 
 	aBlock value.
 	self flush
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuResizeScreen [
+TerminalEmulatorMorph >> menuResizeScreen [
 
 	| n c r |
 	n := UIManager default
@@ -1250,7 +1250,7 @@ TeletypeMorph >> menuResizeScreen [
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuSetCharacterClasses [
+TerminalEmulatorMorph >> menuSetCharacterClasses [
 
 	| n specs spec cclass range start stop |
 	n := UIManager default request: 'Character classes?  (Enter ? for help.)' initialAnswer: '?'.
@@ -1281,7 +1281,7 @@ TeletypeMorph >> menuSetCharacterClasses [
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuSetCharacterClassesHelp [
+TerminalEmulatorMorph >> menuSetCharacterClassesHelp [
 
 	Workspace new
 		contents: 'This preference is a series of comma-separated range:value pairs.  The range is either a single number or low-high in the range of 0 to 255, corresponding to the code for the character or characters to be set.  The value is the class in which to place the characters in the range.  The value is arbitrary, but the standard character classes use the following values: 1 for special graphics characters, 32 for whitespace, 48 for alphanumeric characters (letters and digits), and the code of the character itself for all others (corresponding to puncuation characters).
@@ -1299,7 +1299,7 @@ is similar but includes colon and tilde, making most URLs selectable with a doub
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuSetSavedLineLimit [
+TerminalEmulatorMorph >> menuSetSavedLineLimit [
 
 	| n |
 	n := UIManager default
@@ -1312,7 +1312,7 @@ TeletypeMorph >> menuSetSavedLineLimit [
 ]
 
 { #category : #menus }
-TeletypeMorph >> menuToggleScrollbar [
+TerminalEmulatorMorph >> menuToggleScrollbar [
 
 	| scrollWidth |
 	self hideScrollbar.
@@ -1327,19 +1327,19 @@ TeletypeMorph >> menuToggleScrollbar [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> metaSendsEscape [
+TerminalEmulatorMorph >> metaSendsEscape [
 
 	^metaSendsEscape
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> metaSendsEscape: aBoolean [
+TerminalEmulatorMorph >> metaSendsEscape: aBoolean [
 
 	metaSendsEscape := aBoolean
 ]
 
 { #category : #events }
-TeletypeMorph >> mouseDown: evt [
+TerminalEmulatorMorph >> mouseDown: evt [
 	"A mouse button has been pressed."
 
 "	evt printString displayAt: 10@200.
@@ -1374,7 +1374,7 @@ TeletypeMorph >> mouseDown: evt [
 ]
 
 { #category : #events }
-TeletypeMorph >> mouseEnter: evt [
+TerminalEmulatorMorph >> mouseEnter: evt [
 	"The pointer just entered the window."
 
 	TextCursor beCursor.
@@ -1383,7 +1383,7 @@ TeletypeMorph >> mouseEnter: evt [
 ]
 
 { #category : #events }
-TeletypeMorph >> mouseLeave: evt [
+TerminalEmulatorMorph >> mouseLeave: evt [
 	"The cursor just left the window."
 
 	Cursor normal show.
@@ -1392,7 +1392,7 @@ TeletypeMorph >> mouseLeave: evt [
 ]
 
 { #category : #events }
-TeletypeMorph >> mouseMove: evt [
+TerminalEmulatorMorph >> mouseMove: evt [
 	"The mouse is moving inside the window."
 
 "	evt printString displayAt: 10@220.
@@ -1402,7 +1402,7 @@ TeletypeMorph >> mouseMove: evt [
 ]
 
 { #category : #events }
-TeletypeMorph >> mouseUp: evt [
+TerminalEmulatorMorph >> mouseUp: evt [
 	"A mouse button has been released."
 
 "	evt printString displayAt: 10@240.
@@ -1412,16 +1412,16 @@ TeletypeMorph >> mouseUp: evt [
 ]
 
 { #category : #private }
-TeletypeMorph >> newLine [
+TerminalEmulatorMorph >> newLine [
 
 	| line |
-	line := (SimpleTextState string: (String new: cols withAll: $ )) .
+	line := (TerminalEmulatorTextState string: (String new: cols withAll: $ )) .
 	ec & altScreenColours ifTrue: [line emacsColours].
 	^line
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> newline [
+TerminalEmulatorMorph >> newline [
 
 	self hideCursor; cursorDown: 1 scrolling: true.
 	x := 1.
@@ -1429,7 +1429,7 @@ TeletypeMorph >> newline [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> note: aSymbol with: anObject [
+TerminalEmulatorMorph >> note: aSymbol with: anObject [
 
 	aSymbol == #endpointClosed
 		ifTrue:
@@ -1442,7 +1442,7 @@ TeletypeMorph >> note: aSymbol with: anObject [
 ]
 
 { #category : #menus }
-TeletypeMorph >> offerVTMenu [
+TerminalEmulatorMorph >> offerVTMenu [
 	"The user has pressed CTRL-Yellow (button 2).  Offer a menu similar to the Xterm `VT' menu."
 
 	(self buildVTMenu addStayUpIcons title: 'VT Options')
@@ -1450,7 +1450,7 @@ TeletypeMorph >> offerVTMenu [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> openInWorld [
+TerminalEmulatorMorph >> openInWorld [
 
 	self currentHand newKeyboardFocus: nil.
 	super openInWorld.
@@ -1458,14 +1458,14 @@ TeletypeMorph >> openInWorld [
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> pageDown: nLines [
+TerminalEmulatorMorph >> pageDown: nLines [
 
 	displayStart := displayStart + nLines min: lines size - rows.
 	self linesChanged; changed.
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> pageEnd [
+TerminalEmulatorMorph >> pageEnd [
 
 	 lines size - rows == displayStart
 		ifFalse:
@@ -1474,27 +1474,27 @@ TeletypeMorph >> pageEnd [
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> pageHome [
+TerminalEmulatorMorph >> pageHome [
 
 	displayStart := 0.
 	self linesChanged; changed.
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> pageUp: nLines [
+TerminalEmulatorMorph >> pageUp: nLines [
 
 	displayStart := displayStart - nLines max: 0.
 	self linesChanged; changed.
 ]
 
 { #category : #accessing }
-TeletypeMorph >> pitch [
+TerminalEmulatorMorph >> pitch [
 
 	^pitch
 ]
 
 { #category : #geometry }
-TeletypeMorph >> preferredExtent [
+TerminalEmulatorMorph >> preferredExtent [
 	"Answer the extent that we would be given in an ideal world (no pun intended).  This is just the amout of space we need to display our contents, and no more."
 
 	| w h s |
@@ -1505,7 +1505,7 @@ TeletypeMorph >> preferredExtent [
 ]
 
 { #category : #private }
-TeletypeMorph >> protectSelection [
+TerminalEmulatorMorph >> protectSelection [
 	"If the active position is within the selected region, clear the selection."
 
 	self flag: #ikp. "This is called way too often.  Need to go look where and when it's really necessary."
@@ -1516,7 +1516,7 @@ TeletypeMorph >> protectSelection [
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> put: aChar [
+TerminalEmulatorMorph >> put: aChar [
 
 	scrollOnOutput ifTrue: [self pageEnd].
 	(insertMode and: [x < cols]) ifTrue: [(self protectSelection; currentLine) insertAt: x].
@@ -1526,7 +1526,7 @@ TeletypeMorph >> put: aChar [
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> putNormal: aChar [
+TerminalEmulatorMorph >> putNormal: aChar [
 
 	x >= cols ifTrue: [self wrapIfPossible].
 	selectionActive ifTrue: [self protectSelection].
@@ -1534,13 +1534,13 @@ TeletypeMorph >> putNormal: aChar [
 ]
 
 { #category : #private }
-TeletypeMorph >> reportSizeToSession [
+TerminalEmulatorMorph >> reportSizeToSession [
 
 	session isNil ifFalse: [session note: #windowSize with: cols@rows]
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> resetVideo [
+TerminalEmulatorMorph >> resetVideo [
 
 	self
 		clearSelection;
@@ -1550,7 +1550,7 @@ TeletypeMorph >> resetVideo [
 ]
 
 { #category : #private }
-TeletypeMorph >> restoreDefaults [
+TerminalEmulatorMorph >> restoreDefaults [
 
 	self initializeTerminalModes.
 	savedLineLimit := SavedLineLimit.
@@ -1566,20 +1566,20 @@ TeletypeMorph >> restoreDefaults [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> rows [
+TerminalEmulatorMorph >> rows [
 
 	^rows
 ]
 
 { #category : #protocol }
-TeletypeMorph >> run [
+TerminalEmulatorMorph >> run [
 
 	running := true.
 	session isNil ifFalse: [session note: #windowSize with: cols@rows]
 ]
 
 { #category : #accessing }
-TeletypeMorph >> rv: aBoolean [
+TerminalEmulatorMorph >> rv: aBoolean [
 	"Set the programmed reverse video flag.  Not to be confused with reverseVideo, which is a user preference that inverts the sense of the programmed change."
 
 	rv == aBoolean ifTrue: [^self].
@@ -1589,7 +1589,7 @@ TeletypeMorph >> rv: aBoolean [
 ]
 
 { #category : #private }
-TeletypeMorph >> savePreferences: dict [
+TerminalEmulatorMorph >> savePreferences: dict [
 
 	dict
 		at: #rows put: rows;
@@ -1615,7 +1615,7 @@ TeletypeMorph >> savePreferences: dict [
 ]
 
 { #category : #selection }
-TeletypeMorph >> saveSelection [
+TerminalEmulatorMorph >> saveSelection [
 	"A new selection has been made.  Compute and remember the selection text."
 
 	| stream region |
@@ -1627,34 +1627,34 @@ TeletypeMorph >> saveSelection [
 ]
 
 { #category : #private }
-TeletypeMorph >> scrollBackward [
+TerminalEmulatorMorph >> scrollBackward [
 
 	^self scrollBackwardFrom: topLine to: bottomLine
 ]
 
 { #category : #private }
-TeletypeMorph >> scrollBackwardFrom: top to: bot [
+TerminalEmulatorMorph >> scrollBackwardFrom: top to: bot [
 
 	self hideCursor.
 	savedLines + bot to: savedLines + top + 1 by: -1 do: [ :i | lines at: i put: (lines at: i - 1)].
-	lines at: savedLines + top put: (SimpleTextState new: cols).
+	lines at: savedLines + top put: (TerminalEmulatorTextState new: cols).
 	self showCursor.
 	self linesChanged
 ]
 
 { #category : #private }
-TeletypeMorph >> scrollForward [
+TerminalEmulatorMorph >> scrollForward [
 
 	^self scrollForwardFrom: topLine to: bottomLine
 ]
 
 { #category : #private }
-TeletypeMorph >> scrollForwardFrom: top to: bot [
+TerminalEmulatorMorph >> scrollForwardFrom: top to: bot [
 
 	self hideCursor.
 	(top == 1 and: [bot == rows and: [altScreenActive not]])
 		ifTrue:
-			[lines addLast: (SimpleTextState new: cols).
+			[lines addLast: (TerminalEmulatorTextState new: cols).
 			 lines size > (savedLineLimit + rows)
 				ifTrue: [lines removeFirst selection notNil ifTrue: [self clearSelection]]
 				ifFalse:
@@ -1662,13 +1662,13 @@ TeletypeMorph >> scrollForwardFrom: top to: bot [
 					 displayStart := displayStart + 1]]
 		ifFalse:
 			[savedLines + top to: savedLines + bot - 1 do: [ :i | lines at: i put: (lines at: i + 1)].
-			 lines at: savedLines + bot put: (SimpleTextState new: cols)].
+			 lines at: savedLines + bot put: (TerminalEmulatorTextState new: cols)].
 	self showCursor.
 	self linesChanged; autoFlush
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> scrollbarMenuButtonPressed: evt [
+TerminalEmulatorMorph >> scrollbarMenuButtonPressed: evt [
 
 	(systemWindow isKindOf: TerminalEmulator)
 		ifTrue: [systemWindow offerWindowMenu]
@@ -1676,7 +1676,7 @@ TeletypeMorph >> scrollbarMenuButtonPressed: evt [
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> scrollbarValue: value [
+TerminalEmulatorMorph >> scrollbarValue: value [
 
 	| newStart |
 	newStart := (savedLines * value) rounded min: lines size - rows.
@@ -1686,13 +1686,13 @@ TeletypeMorph >> scrollbarValue: value [
 ]
 
 { #category : #geometry }
-TeletypeMorph >> scrollbarWidth [
+TerminalEmulatorMorph >> scrollbarWidth [
 
 	^ScrollPane new scrollbarWidth
 ]
 
 { #category : #selection }
-TeletypeMorph >> selectLine: screenPosition [
+TerminalEmulatorMorph >> selectLine: screenPosition [
 	"Triple click.  Select the line surrounding the cursor, including the end of line, and save the selection text."
 
 	| pos |
@@ -1708,7 +1708,7 @@ TeletypeMorph >> selectLine: screenPosition [
 ]
 
 { #category : #selection }
-TeletypeMorph >> selectWord: screenPosition [
+TerminalEmulatorMorph >> selectWord: screenPosition [
 	"Double click.  Select the word surrounding the cursor according to the current char class and save the selection text."
 
 	| pos line left right |
@@ -1727,7 +1727,7 @@ TeletypeMorph >> selectWord: screenPosition [
 ]
 
 { #category : #selection }
-TeletypeMorph >> selectionPositionAt: screenPosition [
+TerminalEmulatorMorph >> selectionPositionAt: screenPosition [
 	"Answer a Point in character coordinates corresponding to the given position in screen coordinates.  If screenPosition is above the window, try to scroll up before answering the first character in the window.  If screenPosition is below the window, try to scroll down before answering one character right of the last character in the window."
 
 	| pos |
@@ -1746,63 +1746,63 @@ TeletypeMorph >> selectionPositionAt: screenPosition [
 ]
 
 { #category : #selection }
-TeletypeMorph >> sendSelection [
+TerminalEmulatorMorph >> sendSelection [
 	"Send the clipboard text to the application."
 
 	down downcallAll: Clipboard clipboardText asString asByteArray
 ]
 
 { #category : #protocol }
-TeletypeMorph >> session [
+TerminalEmulatorMorph >> session [
 
 	^session
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> session: aSession [
+TerminalEmulatorMorph >> session: aSession [
 
 	session := aSession
 ]
 
 { #category : #protocol }
-TeletypeMorph >> sessionNote: aSymbol [
+TerminalEmulatorMorph >> sessionNote: aSymbol [
 
 	self sessionNote: aSymbol with: nil
 ]
 
 { #category : #protocol }
-TeletypeMorph >> sessionNote: aSymbol with: anObject [
+TerminalEmulatorMorph >> sessionNote: aSymbol with: anObject [
 
 	session isNil ifFalse: [session note: aSymbol with: anObject]
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setAltScreenColours: aBoolean [
+TerminalEmulatorMorph >> setAltScreenColours: aBoolean [
 
 	altScreenColours := aBoolean.
 	self setEmacsColours: ec.
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setAutoLinefeed: aBoolean [
+TerminalEmulatorMorph >> setAutoLinefeed: aBoolean [
 
 	autoLinefeed := aBoolean
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setAutoWrap: aBoolean [
+TerminalEmulatorMorph >> setAutoWrap: aBoolean [
 
 	autoWrap := aBoolean
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> setBackground: index [
+TerminalEmulatorMorph >> setBackground: index [
 
 	bg := index min: 7 max: 0.
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setEmacsColours: aBoolean [
+TerminalEmulatorMorph >> setEmacsColours: aBoolean [
 
 	(ec := aBoolean) & altScreenColours
 		ifTrue: [submorphs from: 1 to: rows do: [:line | line emacsColours]]
@@ -1811,14 +1811,14 @@ TeletypeMorph >> setEmacsColours: aBoolean [
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> setEmphasis: index [
+TerminalEmulatorMorph >> setEmphasis: index [
 
 	index == 0 ifTrue: [^em := 0].
 	em := em bitOr: (1 bitShift: index - 1).
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> setEmphasis: index to: bit [
+TerminalEmulatorMorph >> setEmphasis: index to: bit [
 
 	bit == 0
 		ifTrue: [em := em bitClear: (1 bitShift: index - 1)]
@@ -1826,13 +1826,13 @@ TeletypeMorph >> setEmphasis: index to: bit [
 ]
 
 { #category : #'character writing' }
-TeletypeMorph >> setForeground: index [
+TerminalEmulatorMorph >> setForeground: index [
 
 	fg := index min: 7 max: 0
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setIconTitle: aString [
+TerminalEmulatorMorph >> setIconTitle: aString [
 
 	systemWindow notNil
 		ifTrue:
@@ -1842,20 +1842,20 @@ TeletypeMorph >> setIconTitle: aString [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setInsertMode: aBoolean [
+TerminalEmulatorMorph >> setInsertMode: aBoolean [
 
 	insertMode := aBoolean
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setRelativeOrigin: aBoolean [
+TerminalEmulatorMorph >> setRelativeOrigin: aBoolean [
 
 	relativeOrigin := aBoolean.
 	self activePosition: 1@1
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setReverseVideo: aBoolean [
+TerminalEmulatorMorph >> setReverseVideo: aBoolean [
 
 	reverseVideo == aBoolean ifTrue: [^self].
 	reverseVideo := aBoolean.
@@ -1864,14 +1864,14 @@ TeletypeMorph >> setReverseVideo: aBoolean [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setScrollRegionTop: top bottom: bottom [
+TerminalEmulatorMorph >> setScrollRegionTop: top bottom: bottom [
 
 	topLine := top min: rows - 1 max: 1.
 	bottomLine := bottom min: rows max: top + 1
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setShowCursor: aBoolean [
+TerminalEmulatorMorph >> setShowCursor: aBoolean [
 
 	self hideCursor.
 	showCursor := aBoolean.
@@ -1879,14 +1879,14 @@ TeletypeMorph >> setShowCursor: aBoolean [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setSmoothScroll: aBoolean [
+TerminalEmulatorMorph >> setSmoothScroll: aBoolean [
 
 	autoFlush := 0.
 	smoothScroll := aBoolean
 ]
 
 { #category : #tabs }
-TeletypeMorph >> setTab [
+TerminalEmulatorMorph >> setTab [
 
 	x <= cols ifTrue: [tabs at: x put: true].
 "
@@ -1898,13 +1898,13 @@ TeletypeMorph >> setTab [
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setWidth: nCols [
+TerminalEmulatorMorph >> setWidth: nCols [
 
 	allow132 ifTrue: [self setWidth: nCols height: rows]
 ]
 
 { #category : #geometry }
-TeletypeMorph >> setWidth: nCols height: nRows [
+TerminalEmulatorMorph >> setWidth: nCols height: nRows [
 	"This is a programmed geometry change.  We try to honour it by figuring out the corresponding geometry change required in our owner in order to acheive the given number of cols and rows.  The actual change takes place on the flip side, when our owner sends down our new extent."
 
 	| flak |
@@ -1917,13 +1917,13 @@ TeletypeMorph >> setWidth: nCols height: nRows [
 ]
 
 { #category : #'initialize-release' }
-TeletypeMorph >> setWindow: aWindow [
+TerminalEmulatorMorph >> setWindow: aWindow [
 
 	systemWindow := aWindow
 ]
 
 { #category : #'operating modes' }
-TeletypeMorph >> setWindowTitle: aString [
+TerminalEmulatorMorph >> setWindowTitle: aString [
 
 	systemWindow notNil
 		ifTrue:
@@ -1933,13 +1933,13 @@ TeletypeMorph >> setWindowTitle: aString [
 ]
 
 { #category : #'cursor control' }
-TeletypeMorph >> showCursor [
+TerminalEmulatorMorph >> showCursor [
 
 	self currentLine cursorCol: x
 ]
 
 { #category : #geometry }
-TeletypeMorph >> showScrollbar [
+TerminalEmulatorMorph >> showScrollbar [
 	"Add a scrollbar to the window."
 
 	scroll isNil
@@ -1952,13 +1952,13 @@ TeletypeMorph >> showScrollbar [
 ]
 
 { #category : #accessing }
-TeletypeMorph >> skip [
+TerminalEmulatorMorph >> skip [
 
 	^skip
 ]
 
 { #category : #selection }
-TeletypeMorph >> startSelection: screenPosition [
+TerminalEmulatorMorph >> startSelection: screenPosition [
 	"Mouse selection has begun.  If this is a double click (mouse hasn't moved since last click and selectionEnd isNil) then select the word under the pointer.  If this is a triple click (mouse hasn't moved and selectionEnd notNil after prior word selection) then select the line under the pointer.  Otherwise clear the current selectionStart and begin tracking."
 
 	| start |
@@ -1986,13 +1986,13 @@ TeletypeMorph >> startSelection: screenPosition [
 ]
 
 { #category : #private }
-TeletypeMorph >> step [
+TerminalEmulatorMorph >> step [
 
 	steps := steps + 1
 ]
 
 { #category : #private }
-TeletypeMorph >> sync [
+TerminalEmulatorMorph >> sync [
 	"Wait until the world has revolved at least once before proceeding."
 
 	| s |
@@ -2001,7 +2001,7 @@ TeletypeMorph >> sync [
 ]
 
 { #category : #tabs }
-TeletypeMorph >> tab [
+TerminalEmulatorMorph >> tab [
 
 	self hideCursor.
 	[x := x + 1.
@@ -2012,14 +2012,14 @@ TeletypeMorph >> tab [
 ]
 
 { #category : #geometry }
-TeletypeMorph >> textBounds [
+TerminalEmulatorMorph >> textBounds [
 	"Answer just the bounds of the text -- excluding border, scroll and inset."
 
 	^self textBounds: self layoutBounds
 ]
 
 { #category : #geometry }
-TeletypeMorph >> textBounds: outer [
+TerminalEmulatorMorph >> textBounds: outer [
 	"Answer just the bounds of the text -- excluding border, scroll and inset."
 
 	| width left right inner |
@@ -2033,7 +2033,7 @@ TeletypeMorph >> textBounds: outer [
 ]
 
 { #category : #selection }
-TeletypeMorph >> trackSelection [
+TerminalEmulatorMorph >> trackSelection [
 	"The mouse is down during selection tracking.  Update the visual representation of the selected region."
 
 	| pos |
@@ -2044,7 +2044,7 @@ TeletypeMorph >> trackSelection [
 ]
 
 { #category : #selection }
-TeletypeMorph >> trackSelection: screenPosition [
+TerminalEmulatorMorph >> trackSelection: screenPosition [
 	"The mouse moved during selection tracking.  Update the visual representation of the selected region."
 
 	(trackingSelection or: [(self selectionPositionAt: screenPosition) isNil])
@@ -2056,7 +2056,7 @@ TeletypeMorph >> trackSelection: screenPosition [
 ]
 
 { #category : #events }
-TeletypeMorph >> unlock [
+TerminalEmulatorMorph >> unlock [
 	"We're acquiring keyboard focus."
 
 	super unlock.
@@ -2065,7 +2065,7 @@ TeletypeMorph >> unlock [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> upcall: char [
+TerminalEmulatorMorph >> upcall: char [
 "
 	Transcript show: 'upcall ', char printString; cr.
 ""	char printString , '   ' displayAt: 10@10.
@@ -2075,13 +2075,13 @@ TeletypeMorph >> upcall: char [
 ]
 
 { #category : #protocol }
-TeletypeMorph >> upcallAll: aCollection [
+TerminalEmulatorMorph >> upcallAll: aCollection [
 
 	aCollection do: [:b | self upcall: b]
 ]
 
 { #category : #scrolling }
-TeletypeMorph >> updateScrollbar [
+TerminalEmulatorMorph >> updateScrollbar [
 
 	scroll isNil ifTrue: [^self].
 	savedLines == 0 ifTrue: [^scroll interval: 1.0; setValue: 0].
@@ -2093,14 +2093,14 @@ TeletypeMorph >> updateScrollbar [
 ]
 
 { #category : #events }
-TeletypeMorph >> wouldAcceptKeyboardFocus [
+TerminalEmulatorMorph >> wouldAcceptKeyboardFocus [
 	"Of course we would."
 
 	^true
 ]
 
 { #category : #private }
-TeletypeMorph >> wrapIfPossible [
+TerminalEmulatorMorph >> wrapIfPossible [
 
 	x > cols ifTrue: [autoWrap
 		ifTrue: [x := 1.  self cursorDown: 1 scrolling: true]

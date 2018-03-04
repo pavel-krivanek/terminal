@@ -72,7 +72,7 @@ TerminalEmulator class >> telnet: hostName port: portNumber [
 	| ep tty |
 	ep := NetworkEndpoint newConnection: hostName port: portNumber.
 	ep isNil ifTrue: [^self error: 'Could not connect'].
-	self new openOn: (tty := TeletypeMorph new).
+	self new openOn: (tty := TerminalEmulatorMorph new).
 	ep asProtocolStack
 		push:	TelnetProtocol new;
 		push:	TerminalType new;

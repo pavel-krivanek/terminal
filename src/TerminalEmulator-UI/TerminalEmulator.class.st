@@ -1,10 +1,10 @@
 "
-I am a kind of SystemWindow intended specifically for hosting a TeletypeMorph.  I provide connection-oriented menus, persistent preferences and menu-based access to my TeletypeMorphs options.
+I am a kind of SystemWindow intended specifically for hosting a TerminalEmulatorMorph.  I provide connection-oriented menus, persistent preferences and menu-based access to my TerminalEmulatorMorph options.
 
 
-win := TeletypeWindow open.
+win := TerminalEmulator open.
 (ProcessEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
-	push:        XtermEmulator new;
+	push:        TerminalEmulatorXterm new;
 	push:        win tty;
 	install;
 	run
@@ -44,7 +44,7 @@ TerminalEmulator class >> initialize [
 	SaveTerminalMainOptions := true.
 	SaveTerminalSize := false.
 	SaveTerminalVTOptions := true.
-	TerminalType := XtermEmulator.
+	TerminalType := TerminalEmulatorXterm.
 	Shortcuts := Dictionary new.
 	
 ]
@@ -73,7 +73,7 @@ TerminalEmulator class >> new [
 { #category : #'instance creation' }
 TerminalEmulator class >> open [
 
-	^self new openOn: TeletypeMorph new
+	^self new openOn: TerminalEmulatorMorph new
 ]
 
 { #category : #'instance creation' }
@@ -83,7 +83,7 @@ TerminalEmulator class >> openBash [
 
 	win := self open.
 	(PseudoTTYEndpoint command: '/bin/bash' arguments: {'-i'}) asProtocolStack
-		push: XtermEmulator new;
+		push: TerminalEmulatorXterm new;
 		push: win tty;
 		install;
 		run.
@@ -107,13 +107,13 @@ TerminalEmulator >> buildConfigMenu [
 	m
 		add: 'terminal type (', TerminalType terminalTypeName, ') '
 		subMenu: ((MenuMorph new defaultTarget: self)
-			add: 'vt102' selector: #menuBlock: argument: [TerminalType := VT102Emulator];
+			add: 'vt102' selector: #menuBlock: argument: [TerminalType := TerminalEmulatorVT102];
 			balloonTextForLastItem: 'Emulate a VT102 terminal.';
-			add: 'xterm' selector: #menuBlock: argument: [TerminalType := XtermEmulator];
+			add: 'xterm' selector: #menuBlock: argument: [TerminalType := TerminalEmulatorXterm];
 			balloonTextForLastItem: 'Emulate an xterm terminal.');
 		balloonTextForLastItem: 'Select the kind of terminal emulation to use.'.
 	"m
-		add: 'font (', SimpleTextMorph defaultFont, ')' subMenu: self buildFontMenu;
+		add: 'font (', TerminalEmulatorLineMorph defaultFont, ')' subMenu: self buildFontMenu;
 		balloonTextForLastItem: 'Set the default font for terminal windows.
 (Changes take effect in NEW windows, not this one.)'."
 
@@ -143,7 +143,7 @@ TerminalEmulator >> buildConfigMenu [
 { #category : #'menus-config' }
 TerminalEmulator >> buildFontMenu [
 	| m |
-	m := MenuMorph new defaultTarget: SimpleTextMorph.
+	m := MenuMorph new defaultTarget: TerminalEmulatorLineMorph.
 	StrikeFont monospacedFamilyNames do: [ :family |
 		m add: family
 		selector: #defaultFont:
@@ -169,6 +169,7 @@ TerminalEmulator >> collapseOrExpand [
 
 { #category : #events }
 TerminalEmulator >> delete [
+self halt.
 	tty delete.
 	^super delete
 
@@ -245,9 +246,9 @@ TerminalEmulator >> menuRestoreDefaults [
 	(self confirm: 'Really restore all defaults?
  Note: this will also clear all of your shortcuts! ') ifFalse: [^self].
 	TerminalEmulator initialize.
-	TeletypeMorph initialize.
-	VT102Emulator initialize.
-	XtermEmulator initialize.
+	TerminalEmulatorMorph initialize.
+	TerminalEmulatorVT102 initialize.
+	TerminalEmulatorXterm initialize.
 	tty sessionNote: #restoreDefaults
 	
 ]
