@@ -40,9 +40,8 @@ On OS X the `fork()` function has the following limitation described in man:
 > If you need to use these frameworks in the child process, you must exec.  In this 
 > situation it is reasonable to exec your-self. yourself."
 
-
 As the result in most cases (but not all) the `fork()` and `exec()` pair from the Smalltalk side fails on OS X. Linux does not have this 
-limitation however even there we found an issue. It is bound to the fact that fork() makes a fork of all the parent process that uses
+limitation however even there we found an issue. It is bound to the fact that `fork()` makes a fork of all the parent process that uses
 the same resources. As soon as Pharo is opened in a window and X11 is involved (the window wants to be repainted), it can lead to the
 VM crash.
 
