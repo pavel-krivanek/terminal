@@ -1,6 +1,12 @@
 # terminal
 Pseudoterminal emulator for Pharo
 
+## Obsolete
+
+USE THIS: [PTerm](https://github.com/lxsang/PTerm)
+
+### Screenshot 
+
 ![TerminalEmulator screenshot](https://raw.githubusercontent.com/pavel-krivanek/terminal/master/img/pseudoTTY-screenshot.png)
 
 ### Warning
